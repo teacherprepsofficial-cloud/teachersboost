@@ -48,19 +48,7 @@ export default function SignupPage() {
         return
       }
 
-      // Sign in user
-      const signInRes = await fetch('/api/auth/callback/credentials', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: formData.email,
-          password: formData.password,
-        }),
-      })
-
-      if (signInRes.ok) {
-        router.push('/dashboard')
-      }
+      router.push('/verify-email')
     } finally {
       setIsLoading(false)
     }

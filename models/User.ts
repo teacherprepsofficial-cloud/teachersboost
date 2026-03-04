@@ -25,6 +25,9 @@ const UserSchema = new mongoose.Schema<IUser>(
     stripeSubscriptionId: String,
     dailySearchCount: { type: Number, default: 0 },
     dailySearchDate: { type: Date, default: Date.now },
+    emailVerified: { type: Boolean, default: false },
+    verificationToken: String,
+    verificationTokenExpiry: Date,
   },
   { timestamps: true }
 )
