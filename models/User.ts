@@ -5,11 +5,14 @@ interface IUser extends mongoose.Document {
   email: string
   password?: string
   name: string
-  plan: 'free' | 'pro'
+  plan: 'free' | 'pro' | 'admin' | 'starter'
   stripeCustomerId?: string
   stripeSubscriptionId?: string
   dailySearchCount: number
   dailySearchDate: Date
+  emailVerified: boolean
+  verificationToken?: string
+  verificationTokenExpiry?: Date
   createdAt: Date
   updatedAt: Date
   comparePassword(password: string): Promise<boolean>
@@ -20,7 +23,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     email: { type: String, required: true, unique: true, lowercase: true },
     password: { type: String },
     name: { type: String, required: true },
-    plan: { type: String, enum: ['free', 'pro'], default: 'free' },
+    plan: { type: String, enum: ['free', 'starter', 'pro', 'admin'], default: 'free' },
     stripeCustomerId: String,
     stripeSubscriptionId: String,
     dailySearchCount: { type: Number, default: 0 },
