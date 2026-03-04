@@ -2,31 +2,28 @@
 
 import { useState } from 'react'
 import { ChevronUp, ChevronDown } from 'lucide-react'
+import Link from 'next/link'
 
 interface KeywordResult {
   keyword: string
   resultCount: number
   competitionScore: number
   isRocket: boolean
-  avgPrice?: number
-  avgViews24h?: number
-  optimalPrice?: number
 }
 
 interface KeywordTableProps {
   data: KeywordResult[]
-  onKeywordSelect?: (keyword: string) => void
 }
 
-type SortKey = 'keyword' | 'competitionScore' | 'avgPrice' | 'avgViews24h' | 'resultCount'
+type SortKey = 'keyword' | 'competitionScore'
 
-export function KeywordTable({ data, onKeywordSelect }: KeywordTableProps) {
+export function KeywordTable({ data }: KeywordTableProps) {
   const [sortKey, setSortKey] = useState<SortKey>('competitionScore')
-  const [sortDesc, setSortDesc] = useState(true)
+  const [sortDesc, setSortDesc] = useState(false) // ascending = best opportunity first
 
   const sorted = [...data].sort((a, b) => {
-    const aVal = a[sortKey] || 0
-    const bVal = b[sortKey] || 0
+    const aVal = a[sortKey]
+    const bVal = b[sortKey]
     const mult = sortDesc ? -1 : 1
     return typeof aVal === 'string'
       ? mult * aVal.localeCompare(bVal as string)
@@ -38,20 +35,26 @@ export function KeywordTable({ data, onKeywordSelect }: KeywordTableProps) {
       setSortDesc(!sortDesc)
     } else {
       setSortKey(key)
-      setSortDesc(true)
+      setSortDesc(false)
     }
   }
 
-  const Header = ({ label, key }: { label: string; key: SortKey }) => (
+  const Header = ({ label, k }: { label: string; k: SortKey }) => (
     <button
-      onClick={() => toggleSort(key)}
-      className="flex items-center gap-1 font-semibold text-sm hover:bg-gray-100 px-2 py-1 rounded"
+      onClick={() => toggleSort(k)}
+      className="flex items-center gap-1 font-semibold text-sm hover:text-purple-600 transition"
     >
       {label}
-      {sortKey === key &&
-        (sortDesc ? <ChevronDown size={16} /> : <ChevronUp size={16} />)}
+      {sortKey === k &&
+        (sortDesc ? <ChevronDown size={14} /> : <ChevronUp size={14} />)}
     </button>
   )
+
+  const getGrade = (resultCount: number, isRocket: boolean) => {
+    if (isRocket) return { label: '🚀 Hidden Gem', color: 'text-green-600 font-bold' }
+    if (resultCount < 3000) return { label: '🟡 Moderate', color: 'text-yellow-600 font-semibold' }
+    return { label: '🔴 Competitive', color: 'text-red-500 font-semibold' }
+  }
 
   return (
     <div className="overflow-x-auto rounded-[15px] border border-gray-200">
@@ -59,51 +62,41 @@ export function KeywordTable({ data, onKeywordSelect }: KeywordTableProps) {
         <thead className="bg-gray-50 border-b border-gray-200">
           <tr>
             <th className="px-4 py-3 text-left">
-              <Header label="Keyword" key="keyword" />
+              <Header label="Keyword" k="keyword" />
             </th>
-            <th className="px-4 py-3 text-right">
-              <Header label="Competition" key="competitionScore" />
+            <th className="px-4 py-3 text-left">
+              <Header label="Competition Score" k="competitionScore" />
             </th>
-            <th className="px-4 py-3 text-right">
-              <Header label="Results" key="resultCount" />
-            </th>
-            <th className="px-4 py-3 text-right">
-              <Header label="Avg Price" key="avgPrice" />
-            </th>
-            <th className="px-4 py-3 text-right">
-              <Header label="Views/24h" key="avgViews24h" />
+            <th className="px-4 py-3 text-left">
+              <span className="font-semibold text-sm">Opportunity Grade</span>
             </th>
           </tr>
         </thead>
         <tbody>
-          {sorted.map((row, idx) => (
-            <tr
-              key={idx}
-              className="border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition"
-              onClick={() => onKeywordSelect?.(row.keyword)}
-            >
-              <td className="px-4 py-3">
-                <span className="flex items-center gap-2">
-                  {row.isRocket && <span>🚀</span>}
-                  <span className="font-medium text-gray-900">{row.keyword}</span>
-                </span>
-              </td>
-              <td className="px-4 py-3 text-right">
-                <span className="text-sm font-semibold text-purple-600">
+          {sorted.map((row, idx) => {
+            const grade = getGrade(row.resultCount, row.isRocket)
+            return (
+              <tr
+                key={idx}
+                className="border-b border-gray-100 hover:bg-purple-50 transition"
+              >
+                <td className="px-4 py-3">
+                  <Link
+                    href={`/keywords/${encodeURIComponent(row.keyword)}`}
+                    className="font-medium text-purple-600 hover:text-purple-800 hover:underline"
+                  >
+                    {row.keyword}
+                  </Link>
+                </td>
+                <td className="px-4 py-3 text-sm font-semibold text-gray-700">
                   {row.competitionScore.toFixed(2)}
-                </span>
-              </td>
-              <td className="px-4 py-3 text-right text-sm text-gray-600">
-                {row.resultCount.toLocaleString()}
-              </td>
-              <td className="px-4 py-3 text-right text-sm text-gray-600">
-                {row.avgPrice ? `$${row.avgPrice.toFixed(2)}` : '—'}
-              </td>
-              <td className="px-4 py-3 text-right text-sm text-gray-600">
-                {row.avgViews24h ? row.avgViews24h.toLocaleString() : '—'}
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className={`px-4 py-3 text-sm ${grade.color}`}>
+                  {grade.label}
+                </td>
+              </tr>
+            )
+          })}
         </tbody>
       </table>
     </div>

@@ -59,6 +59,72 @@ export async function scrapeKeywordSuggestions(keyword: string): Promise<string[
   return [...new Set(variations)].slice(0, 8)
 }
 
+export interface TopProduct {
+  title: string
+  url: string
+  price: number
+  rating: number
+  ratingCount: number
+  sellerName: string
+}
+
+export async function scrapeTopProducts(keyword: string): Promise<TopProduct[]> {
+  try {
+    const url = `${TPT_BASE}/browse?search=${encodeURIComponent(keyword)}&order=Relevance`
+    const html = await fetchPage(url)
+
+    const products: TopProduct[] = []
+
+    // TpT embeds product data as JSON in the page
+    const dataMatch = html.match(/"products"\s*:\s*(\[[\s\S]*?\])\s*,\s*"(?:totalCount|pagination)"/m)
+    if (dataMatch) {
+      try {
+        const items = JSON.parse(dataMatch[1])
+        for (const item of items.slice(0, 6)) {
+          const title = item.name || item.title || ''
+          const slug = item.slug || item.url || ''
+          const price = parseFloat(item.price) || 0
+          const rating = parseFloat(item.rating?.average || item.averageRating || 0)
+          const ratingCount = parseInt(item.rating?.count || item.ratingCount || 0)
+          const sellerName = item.seller?.name || item.storeName || ''
+
+          if (title) {
+            products.push({
+              title,
+              url: slug.startsWith('http') ? slug : `${TPT_BASE}/Product/${slug}`,
+              price,
+              rating,
+              ratingCount,
+              sellerName,
+            })
+          }
+        }
+      } catch {}
+    }
+
+    // Fallback: extract from og/meta tags or structured data
+    if (products.length === 0) {
+      const scriptMatches = html.matchAll(/"name":"([^"]{10,}?)","slug":"([^"]+?)","price":"?(\d+\.?\d*)"?/g)
+      for (const m of scriptMatches) {
+        if (products.length >= 6) break
+        products.push({
+          title: m[1],
+          url: `${TPT_BASE}/Product/${m[2]}`,
+          price: parseFloat(m[3]) || 0,
+          rating: 0,
+          ratingCount: 0,
+          sellerName: '',
+        })
+      }
+    }
+
+    return products.slice(0, 6)
+  } catch (error) {
+    console.error(`Error scraping top products for "${keyword}":`, error)
+    return []
+  }
+}
+
 export async function scrapeShop(shopUrl: string): Promise<{
   storeName: string
   rating: number
