@@ -28,16 +28,14 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check freemium limits
+    // Check freemium limits (weekly: 3 searches per week)
     if (user.plan !== 'pro') {
       const now = new Date()
       const lastDate = new Date(user.dailySearchDate)
-      const sameDay =
-        lastDate.getDate() === now.getDate() &&
-        lastDate.getMonth() === now.getMonth() &&
-        lastDate.getFullYear() === now.getFullYear()
+      const msPerWeek = 7 * 24 * 60 * 60 * 1000
+      const newWeek = now.getTime() - lastDate.getTime() > msPerWeek
 
-      if (!sameDay) {
+      if (newWeek) {
         user.dailySearchCount = 0
         user.dailySearchDate = now
         await user.save()
@@ -45,7 +43,7 @@ export async function POST(req: NextRequest) {
 
       if (user.dailySearchCount >= 3) {
         return NextResponse.json(
-          { error: 'Daily search limit reached', remaining: 0, limit: 3 },
+          { error: 'Weekly search limit reached', remaining: 0, limit: 3 },
           { status: 429 }
         )
       }

@@ -17,7 +17,7 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white rounded-[15px] shadow-lg max-w-md w-full mx-4 p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-900">Daily Limit Reached</h2>
+          <h2 className="text-xl font-bold text-gray-900">Weekly Limit Reached</h2>
           <button
             onClick={onClose}
             className="p-1 hover:bg-gray-100 rounded-lg transition"
@@ -27,7 +27,7 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
         </div>
 
         <p className="text-gray-600 mb-4">
-          You've used all {limit} of your daily keyword searches. Upgrade to Pro for unlimited
+          You've used all {limit} of your weekly keyword searches. Upgrade to Pro for unlimited
           access.
         </p>
 
