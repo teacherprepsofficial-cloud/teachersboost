@@ -6,35 +6,35 @@ import { Search, Store, Zap, DollarSign, TrendingUp } from 'lucide-react'
 
 const features = [
   {
-    href: '/dashboard/keywords',
+    href: '/keywords',
     icon: Search,
     title: 'Keyword Research',
     description: 'Find high-opportunity keywords with low competition',
     color: 'from-blue-500 to-blue-600',
   },
   {
-    href: '/dashboard/shop-optimizer',
+    href: '/shop-optimizer',
     icon: Store,
     title: 'Shop Optimizer',
     description: 'Analyze your TpT shop and get personalized recommendations',
     color: 'from-green-500 to-green-600',
   },
   {
-    href: '/dashboard/title-generator',
+    href: '/title-generator',
     icon: Zap,
     title: 'Title Generator',
     description: 'AI-powered SEO-optimized product titles for TpT',
     color: 'from-yellow-500 to-yellow-600',
   },
   {
-    href: '/dashboard/description-generator',
+    href: '/description-generator',
     icon: Zap,
     title: 'Description Generator',
     description: 'Create compelling product descriptions that sell',
     color: 'from-pink-500 to-pink-600',
   },
   {
-    href: '/dashboard/pricing-calculator',
+    href: '/pricing-calculator',
     icon: DollarSign,
     title: 'Pricing Calculator',
     description: 'Find the optimal price for your products',

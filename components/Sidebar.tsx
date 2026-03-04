@@ -17,12 +17,12 @@ import { FeedbackWidget } from './FeedbackWidget'
 
 const menuItems = [
   { href: '/dashboard', label: 'Dashboard', icon: Zap },
-  { href: '/dashboard/keywords', label: 'Keyword Research', icon: Search },
-  { href: '/dashboard/shop-optimizer', label: 'Shop Optimizer', icon: Store },
-  { href: '/dashboard/title-generator', label: 'Title Generator', icon: Zap },
-  { href: '/dashboard/description-generator', label: 'Description Generator', icon: Zap },
-  { href: '/dashboard/pricing-calculator', label: 'Pricing Calculator', icon: DollarSign },
-  { href: '/dashboard/settings', label: 'Settings', icon: Settings },
+  { href: '/keywords', label: 'Keyword Research', icon: Search },
+  { href: '/shop-optimizer', label: 'Shop Optimizer', icon: Store },
+  { href: '/title-generator', label: 'Title Generator', icon: Zap },
+  { href: '/description-generator', label: 'Description Generator', icon: Zap },
+  { href: '/pricing-calculator', label: 'Pricing Calculator', icon: DollarSign },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ]
 
 export function Sidebar() {
