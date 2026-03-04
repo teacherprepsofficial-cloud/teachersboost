@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Check freemium limits (weekly: 3 searches per week)
-    if (user.plan !== 'pro') {
+    if (user.plan !== 'pro' && user.plan !== 'admin') {
       const now = new Date()
       const lastDate = new Date(user.dailySearchDate)
       const msPerWeek = 7 * 24 * 60 * 60 * 1000
@@ -98,7 +98,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Increment usage
-    if (user.plan !== 'pro') {
+    if (user.plan !== 'pro' && user.plan !== 'admin') {
       user.dailySearchCount += 1
       await user.save()
     }
