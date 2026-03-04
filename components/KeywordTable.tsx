@@ -50,9 +50,10 @@ export function KeywordTable({ data }: KeywordTableProps) {
     </button>
   )
 
-  const getGrade = (resultCount: number, isRocket: boolean) => {
-    if (isRocket) return { label: '🚀 Hidden Gem', color: 'text-green-600 font-bold' }
-    if (resultCount < 3000) return { label: '🟡 Moderate', color: 'text-yellow-600 font-semibold' }
+  const getGrade = (competitionScore: number) => {
+    if (competitionScore < 1) return { label: '🚀 Hidden Gem', color: 'text-green-600 font-bold' }
+    if (competitionScore < 5) return { label: '🟡 Moderate', color: 'text-yellow-600 font-semibold' }
+    if (competitionScore < 10) return { label: '🟠 Crowded', color: 'text-orange-500 font-semibold' }
     return { label: '🔴 Competitive', color: 'text-red-500 font-semibold' }
   }
 
@@ -74,7 +75,7 @@ export function KeywordTable({ data }: KeywordTableProps) {
         </thead>
         <tbody>
           {sorted.map((row, idx) => {
-            const grade = getGrade(row.resultCount, row.isRocket)
+            const grade = getGrade(row.competitionScore)
             return (
               <tr
                 key={idx}

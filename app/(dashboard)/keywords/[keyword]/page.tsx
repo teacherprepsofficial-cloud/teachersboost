@@ -23,9 +23,10 @@ interface BreakdownData {
   topProducts: TopProduct[]
 }
 
-function getGrade(resultCount: number, isRocket: boolean) {
-  if (isRocket) return { label: '🚀 Hidden Gem', sub: 'Low competition — high opportunity', color: 'bg-green-50 border-green-200 text-green-800' }
-  if (resultCount < 3000) return { label: '🟡 Moderate', sub: 'Some competition — still winnable', color: 'bg-yellow-50 border-yellow-200 text-yellow-800' }
+function getGrade(competitionScore: number) {
+  if (competitionScore < 1) return { label: '🚀 Hidden Gem', sub: 'Low competition — high opportunity', color: 'bg-green-50 border-green-200 text-green-800' }
+  if (competitionScore < 5) return { label: '🟡 Moderate', sub: 'Some competition — still winnable', color: 'bg-yellow-50 border-yellow-200 text-yellow-800' }
+  if (competitionScore < 10) return { label: '🟠 Crowded', sub: 'Getting competitive — needs strong product', color: 'bg-orange-50 border-orange-200 text-orange-800' }
   return { label: '🔴 Competitive', sub: 'Crowded market — hard to break in', color: 'bg-red-50 border-red-200 text-red-800' }
 }
 
@@ -78,7 +79,7 @@ export default function KeywordBreakdownPage() {
     )
   }
 
-  const grade = getGrade(data.resultCount, data.isRocket)
+  const grade = getGrade(data.competitionScore)
 
   return (
     <div className="min-h-screen bg-gray-50 p-6">
