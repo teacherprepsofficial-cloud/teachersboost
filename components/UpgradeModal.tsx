@@ -15,7 +15,7 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-[15px] shadow-lg max-w-md w-full mx-4 p-6">
+      <div className="bg-white rounded-[5px] shadow-lg max-w-md w-full mx-4 p-6">
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-900">Weekly Limit Reached</h2>
           <button
@@ -31,7 +31,7 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
           access.
         </p>
 
-        <div className="bg-purple-50 border border-purple-200 rounded-[15px] p-4 mb-6">
+        <div className="bg-purple-50 border border-purple-200 rounded-[5px] p-4 mb-6">
           <p className="text-sm text-purple-900">
             <strong>Pro Plan</strong> - $9.99/month
           </p>
@@ -46,13 +46,13 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
         <div className="flex gap-3">
           <button
             onClick={onClose}
-            className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-[15px] font-semibold hover:bg-gray-50 transition"
+            className="flex-1 px-4 py-2 text-gray-700 border border-gray-300 rounded-[5px] font-semibold hover:bg-gray-50 transition"
           >
             Cancel
           </button>
           <button
             onClick={() => (window.location.href = '/pricing')}
-            className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-[15px] font-semibold hover:bg-purple-700 transition"
+            className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-[5px] font-semibold hover:bg-purple-700 transition"
           >
             Upgrade Now
           </button>

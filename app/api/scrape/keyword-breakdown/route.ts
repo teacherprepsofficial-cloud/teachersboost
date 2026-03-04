@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { scrapeKeywordResults, scrapeTopProducts } from '@/lib/scraper'
+import { scrapeKeywordResults, scrapeTopProducts, scrapeKeywordLongTail, scrapeFirstProduct } from '@/lib/scraper'
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,24 +15,37 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Keyword required' }, { status: 400 })
     }
 
-    const [results, topProducts] = await Promise.all([
+    const longTailKeywords = await scrapeKeywordLongTail(keyword)
+
+    const SORT_ORDERS = [
+      { key: 'topRanking',  order: 'Relevance',   label: '#1 Top Ranking Product',  icon: '🏆' },
+      { key: 'topRated',    order: 'Rating',       label: '#1 Top Rated Product',    icon: '⭐' },
+      { key: 'lowestPrice', order: 'Price-Asc',    label: 'Lowest Priced Product',   icon: '🏷️' },
+      { key: 'mostRecent',  order: 'Most-Recent',  label: 'Most Recently Uploaded',  icon: '🆕' },
+    ]
+
+    const [results, topProducts, sortProducts, longTailResults] = await Promise.all([
       scrapeKeywordResults(keyword),
       scrapeTopProducts(keyword),
+      Promise.all(SORT_ORDERS.map(s => scrapeFirstProduct(keyword, s.order))),
+      Promise.all(longTailKeywords.map(kw => scrapeKeywordResults(kw).then(r => ({ keyword: kw, ...r })))),
     ])
 
-    // Calculate avg price from top products
-    const priced = topProducts.filter(p => p.price > 0)
-    const avgPrice = priced.length
-      ? parseFloat((priced.reduce((s, p) => s + p.price, 0) / priced.length).toFixed(2))
-      : 0
+    const competitionLinks = SORT_ORDERS.map((s, i) => ({
+      label: s.label,
+      icon: s.icon,
+      title: sortProducts[i]?.title || null,
+      url: sortProducts[i]?.url || `https://www.teacherspayteachers.com/browse?search=${encodeURIComponent(keyword)}&order=${s.order}`,
+    }))
 
     return NextResponse.json({
       keyword,
       resultCount: results.resultCount,
       competitionScore: results.competitionScore,
       isRocket: results.isRocket,
-      avgPrice,
       topProducts,
+      competitionLinks,
+      matchingKeywords: longTailResults,
     })
   } catch (error) {
     console.error('Keyword breakdown error:', error)

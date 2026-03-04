@@ -13,6 +13,11 @@ interface IUser extends mongoose.Document {
   emailVerified: boolean
   verificationToken?: string
   verificationTokenExpiry?: Date
+  // Onboarding profile
+  onboardingCompleted: boolean
+  onboardingGoal?: string
+  onboardingGrades?: string[]
+  onboardingStoreStage?: string
   createdAt: Date
   updatedAt: Date
   comparePassword(password: string): Promise<boolean>
@@ -31,6 +36,10 @@ const UserSchema = new mongoose.Schema<IUser>(
     emailVerified: { type: Boolean, default: false },
     verificationToken: String,
     verificationTokenExpiry: Date,
+    onboardingCompleted: { type: Boolean, default: false },
+    onboardingGoal: String,
+    onboardingGrades: [String],
+    onboardingStoreStage: String,
   },
   { timestamps: true }
 )

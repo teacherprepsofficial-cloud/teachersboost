@@ -9,7 +9,7 @@ export default function PricingCalculatorPage() {
           Find the optimal price for your TpT products
         </p>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-[15px] p-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-[5px] p-6">
           <p className="text-blue-900">
             Coming soon: Competitive pricing analysis and recommendations
           </p>

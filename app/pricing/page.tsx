@@ -93,7 +93,7 @@ export default function PricingPage() {
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`bg-white rounded-[15px] shadow overflow-hidden relative ${
+              className={`bg-white rounded-[5px] shadow overflow-hidden relative ${
                 plan.highlight ? 'ring-2 ring-purple-500 shadow-xl scale-105' : ''
               }`}
             >
@@ -116,7 +116,7 @@ export default function PricingPage() {
 
                 <Link
                   href={plan.ctaHref}
-                  className={`block w-full text-center py-3 rounded-[15px] font-semibold transition mb-8 ${plan.ctaStyle}`}
+                  className={`block w-full text-center py-3 rounded-[5px] font-semibold transition mb-8 ${plan.ctaStyle}`}
                 >
                   {plan.cta}
                 </Link>
@@ -160,7 +160,7 @@ export default function PricingPage() {
                 a: 'If you\'re not happy in your first 7 days, reach out and we\'ll make it right.',
               },
             ].map((item) => (
-              <div key={item.q} className="bg-white rounded-[15px] p-6 shadow-sm">
+              <div key={item.q} className="bg-white rounded-[5px] p-6 shadow-sm">
                 <p className="font-bold text-gray-900 mb-2">{item.q}</p>
                 <p className="text-gray-600 text-sm">{item.a}</p>
               </div>

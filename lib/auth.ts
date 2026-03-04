@@ -34,6 +34,7 @@ export const authOptions: NextAuthOptions = {
           email: user.email,
           name: user.name,
           plan: user.plan,
+          onboardingCompleted: user.onboardingCompleted,
         }
       },
     }),
@@ -51,6 +52,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token.id = user.id
         token.plan = user.plan
+        token.onboardingCompleted = (user as any).onboardingCompleted
       }
       return token
     },
@@ -58,6 +60,7 @@ export const authOptions: NextAuthOptions = {
       if (session.user) {
         session.user.id = token.id as string
         session.user.plan = token.plan as string
+        session.user.onboardingCompleted = token.onboardingCompleted as boolean
       }
       return session
     },

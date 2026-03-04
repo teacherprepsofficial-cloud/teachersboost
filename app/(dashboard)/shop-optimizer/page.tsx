@@ -35,7 +35,7 @@ export default function ShopOptimizerPage() {
           Analyze your TpT shop and get personalized recommendations
         </p>
 
-        <form onSubmit={handleSubmit} className="bg-white rounded-[15px] shadow p-8 mb-8">
+        <form onSubmit={handleSubmit} className="bg-white rounded-[5px] shadow p-8 mb-8">
           <div className="mb-6">
             <label className="block text-sm font-semibold text-gray-700 mb-2">
               TpT Shop URL
@@ -65,7 +65,7 @@ export default function ShopOptimizerPage() {
           </button>
         </form>
 
-        <div className="bg-blue-50 border border-blue-200 rounded-[15px] p-6">
+        <div className="bg-blue-50 border border-blue-200 rounded-[5px] p-6">
           <p className="text-blue-900">
             Coming soon: Shop analysis, competitor benchmarking, and AI recommendations
           </p>

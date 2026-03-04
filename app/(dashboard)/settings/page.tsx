@@ -11,7 +11,7 @@ export default function SettingsPage() {
         <h1 className="text-4xl font-bold text-gray-900 mb-8">Settings</h1>
 
         {/* Account Section */}
-        <div className="bg-white rounded-[15px] shadow p-8 mb-8">
+        <div className="bg-white rounded-[5px] shadow p-8 mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-6">Account</h2>
 
           <div className="space-y-4">
@@ -52,7 +52,7 @@ export default function SettingsPage() {
 
         {/* Billing Section */}
         {session?.user?.plan === 'free' && (
-          <div className="bg-purple-50 border-2 border-purple-200 rounded-[15px] p-8">
+          <div className="bg-purple-50 border-2 border-purple-200 rounded-[5px] p-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">Upgrade to Pro</h2>
             <p className="text-gray-700 mb-6">
               Get unlimited keyword searches, shop analysis, and AI generators.

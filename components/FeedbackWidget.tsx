@@ -53,7 +53,7 @@ export function FeedbackWidget() {
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 bg-white rounded-[15px] shadow-lg p-6 w-80 z-40">
+        <div className="fixed bottom-24 right-6 bg-white rounded-[5px] shadow-lg p-6 w-80 z-40">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-900">Send Feedback</h3>
             <button

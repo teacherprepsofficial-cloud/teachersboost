@@ -42,21 +42,48 @@ export async function scrapeKeywordResults(keyword: string): Promise<{
 }
 
 export async function scrapeKeywordSuggestions(keyword: string): Promise<string[]> {
-  // TpT suggestions come from their internal API — generate related terms instead
-  const words = keyword.toLowerCase().split(' ')
-  const variations = [
-    keyword,
-    `${keyword} activities`,
-    `${keyword} worksheets`,
-    `${keyword} lesson plan`,
-    `${keyword} printable`,
-    `${keyword} kindergarten`,
-    `${keyword} 1st grade`,
-    `${keyword} 2nd grade`,
-    `${keyword} craft`,
-    `${keyword} anchor chart`,
+  try {
+    const res = await fetch('https://sbekgjsj8m-3.algolianet.com/1/indexes/*/queries', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-algolia-api-key': 'ce17b545c6ba0432cf638e0c29ee64ef',
+        'x-algolia-application-id': 'SBEKGJSJ8M',
+      },
+      body: JSON.stringify({
+        requests: [{
+          indexName: 'Resource Suggestions',
+          params: `hitsPerPage=5&query=${encodeURIComponent(keyword)}`,
+        }],
+      }),
+    })
+    if (!res.ok) throw new Error('Algolia error')
+    const data = await res.json()
+    const hits = data?.results?.[0]?.hits || []
+    return hits.map((h: any) => h.query as string).filter(Boolean)
+  } catch {
+    return []
+  }
+}
+
+export async function scrapeKeywordLongTail(keyword: string): Promise<string[]> {
+  const kw = keyword.toLowerCase().trim()
+  return [
+    `${kw} activities`,
+    `${kw} worksheets`,
+    `${kw} lesson plan`,
+    `${kw} printable`,
+    `${kw} 1st grade`,
+    `${kw} 2nd grade`,
+    `${kw} 3rd grade`,
+    `${kw} 4th grade`,
+    `${kw} 5th grade`,
+    `${kw} middle school`,
+    `${kw} high school`,
+    `${kw} kindergarten`,
+    `${kw} special education`,
+    `${kw} free`,
   ]
-  return [...new Set(variations)].slice(0, 8)
 }
 
 export interface TopProduct {
@@ -68,6 +95,48 @@ export interface TopProduct {
   sellerName: string
 }
 
+export async function scrapeFirstProduct(keyword: string, order: string): Promise<{ title: string; url: string } | null> {
+  try {
+    const html = await fetchPage(`${TPT_BASE}/browse?search=${encodeURIComponent(keyword)}&order=${order}`)
+
+    // Strategy 1: JSON arrays
+    const arrayPatterns = [
+      /"products"\s*:\s*(\[[\s\S]{20,10000}?\])\s*[,}]/,
+      /"items"\s*:\s*(\[[\s\S]{20,10000}?\])\s*[,}]/,
+      /"listings"\s*:\s*(\[[\s\S]{20,10000}?\])\s*[,}]/,
+    ]
+    for (const pattern of arrayPatterns) {
+      const match = html.match(pattern)
+      if (!match) continue
+      try {
+        const items = JSON.parse(match[1])
+        if (!Array.isArray(items) || items.length === 0) continue
+        const item = items[0]
+        const title = item.name || item.title || item.productTitle || ''
+        const slug = item.slug || item.canonicalUrl || item.url || ''
+        if (title && slug) {
+          return {
+            title,
+            url: slug.startsWith('http') ? slug : `${TPT_BASE}/Product/${slug}`,
+          }
+        }
+      } catch {}
+    }
+
+    // Strategy 2: find first product link from HTML
+    const linkMatch = html.match(/href="(\/Product\/[^"]+)"[^>]*>/)
+    if (linkMatch) {
+      const url = `${TPT_BASE}${linkMatch[1]}`
+      const titleMatch = html.match(new RegExp(`href="${linkMatch[1].replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}"[^>]*>\\s*<[^>]+>\\s*([^<]{10,120})`))
+      return { title: titleMatch?.[1]?.trim() || 'View Product', url }
+    }
+
+    return null
+  } catch {
+    return null
+  }
+}
+
 export async function scrapeTopProducts(keyword: string): Promise<TopProduct[]> {
   try {
     const url = `${TPT_BASE}/browse?search=${encodeURIComponent(keyword)}&order=Relevance`
@@ -75,24 +144,36 @@ export async function scrapeTopProducts(keyword: string): Promise<TopProduct[]> 
 
     const products: TopProduct[] = []
 
-    // TpT embeds product data as JSON in the page
-    const dataMatch = html.match(/"products"\s*:\s*(\[[\s\S]*?\])\s*,\s*"(?:totalCount|pagination)"/m)
-    if (dataMatch) {
-      try {
-        const items = JSON.parse(dataMatch[1])
-        for (const item of items.slice(0, 6)) {
-          const title = item.name || item.title || ''
-          const slug = item.slug || item.url || ''
-          const price = parseFloat(item.price) || 0
-          const rating = parseFloat(item.rating?.average || item.averageRating || 0)
-          const ratingCount = parseInt(item.rating?.count || item.ratingCount || 0)
-          const sellerName = item.seller?.name || item.storeName || ''
+    // Strategy 1: find any JSON array labeled "products" or "items"
+    const arrayPatterns = [
+      /"products"\s*:\s*(\[[\s\S]{20,10000}?\])\s*[,}]/,
+      /"items"\s*:\s*(\[[\s\S]{20,10000}?\])\s*[,}]/,
+      /"listings"\s*:\s*(\[[\s\S]{20,10000}?\])\s*[,}]/,
+    ]
 
-          if (title) {
+    for (const pattern of arrayPatterns) {
+      if (products.length > 0) break
+      const match = html.match(pattern)
+      if (!match) continue
+      try {
+        const items = JSON.parse(match[1])
+        if (!Array.isArray(items)) continue
+        for (const item of items.slice(0, 24)) {
+          const title = item.name || item.title || item.productTitle || ''
+          const slug = item.slug || item.canonicalUrl || item.url || ''
+          const rawPrice = item.price || item.currentPrice || item.priceInCents
+          const price = rawPrice
+            ? (typeof rawPrice === 'string' ? parseFloat(rawPrice) : rawPrice > 100 ? rawPrice / 100 : rawPrice)
+            : 0
+          const rating = parseFloat(item.rating?.average ?? item.averageRating ?? item.starRating ?? 0)
+          const ratingCount = parseInt(item.rating?.count ?? item.ratingCount ?? item.reviewCount ?? 0)
+          const sellerName = item.seller?.name ?? item.storeName ?? item.author?.name ?? ''
+
+          if (title && price > 0) {
             products.push({
               title,
               url: slug.startsWith('http') ? slug : `${TPT_BASE}/Product/${slug}`,
-              price,
+              price: parseFloat(price.toFixed(2)),
               rating,
               ratingCount,
               sellerName,
@@ -102,23 +183,30 @@ export async function scrapeTopProducts(keyword: string): Promise<TopProduct[]> 
       } catch {}
     }
 
-    // Fallback: extract from og/meta tags or structured data
+    // Strategy 2: regex for price patterns scattered in HTML
     if (products.length === 0) {
-      const scriptMatches = html.matchAll(/"name":"([^"]{10,}?)","slug":"([^"]+?)","price":"?(\d+\.?\d*)"?/g)
-      for (const m of scriptMatches) {
-        if (products.length >= 6) break
-        products.push({
-          title: m[1],
-          url: `${TPT_BASE}/Product/${m[2]}`,
-          price: parseFloat(m[3]) || 0,
-          rating: 0,
-          ratingCount: 0,
-          sellerName: '',
-        })
+      const priceMatches = [...html.matchAll(/"(?:price|currentPrice)"\s*:\s*"?(\d+\.?\d*)"?/g)]
+      const titleMatches = [...html.matchAll(/"(?:name|title)"\s*:\s*"([^"]{15,120})"/g)]
+      const slugMatches  = [...html.matchAll(/"slug"\s*:\s*"([^"]+)"/g)]
+      const len = Math.min(priceMatches.length, titleMatches.length, 24)
+      for (let i = 0; i < len && products.length < 24; i++) {
+        const price = parseFloat(priceMatches[i][1])
+        if (price > 0 && price < 500) {
+          products.push({
+            title: titleMatches[i][1],
+            url: slugMatches[i] ? `${TPT_BASE}/Product/${slugMatches[i][1]}` : `${TPT_BASE}/browse?search=${encodeURIComponent(keyword)}`,
+            price,
+            rating: 0,
+            ratingCount: 0,
+            sellerName: '',
+          })
+        }
       }
     }
 
-    return products.slice(0, 6)
+    // Sanity filter: TpT products are $0–$25. Anything outside is likely metadata noise.
+    const filtered = products.filter(p => p.price >= 0.5 && p.price <= 25)
+    return filtered.slice(0, 24)
   } catch (error) {
     console.error(`Error scraping top products for "${keyword}":`, error)
     return []

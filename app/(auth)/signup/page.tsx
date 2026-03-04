@@ -56,7 +56,7 @@ export default function SignupPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 to-orange-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-[15px] shadow-lg p-8 max-w-md w-full">
+      <div className="bg-white rounded-[5px] shadow-lg p-8 max-w-md w-full">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
         <p className="text-gray-600 mb-6">Join thousands of TpT sellers using TeachersBoost</p>
 

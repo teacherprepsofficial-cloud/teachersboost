@@ -37,7 +37,8 @@ export function LoginForm() {
         return
       }
 
-      router.push('/dashboard')
+      const next = searchParams.get('next') || '/keywords'
+      router.push(next)
     } finally {
       setIsLoading(false)
     }
@@ -46,14 +47,14 @@ export function LoginForm() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn('google', { callbackUrl: '/dashboard' })
+      await signIn('google', { callbackUrl: '/onboarding' })
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="bg-white rounded-[15px] shadow-lg p-8 max-w-md w-full">
+    <div className="bg-white rounded-[5px] shadow-lg p-8 max-w-md w-full">
       <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
       <p className="text-gray-600 mb-6">Log in to your TeachersBoost account</p>
 

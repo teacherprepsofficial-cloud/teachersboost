@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/db'
-import { scrapeKeywordResults, scrapeKeywordSuggestions } from '@/lib/scraper'
+import { scrapeKeywordResults, scrapeKeywordSuggestions, scrapeKeywordLongTail } from '@/lib/scraper'
 import { KeywordSearch } from '@/models/KeywordSearch'
 import { User } from '@/models/User'
 
@@ -62,10 +62,19 @@ export async function POST(req: NextRequest) {
     // Scrape main keyword
     const results = await scrapeKeywordResults(keyword)
 
-    // Get suggestions and scrape each
-    const suggestions = await scrapeKeywordSuggestions(keyword)
+    // Trending = TpT Algolia suggestions with competition scores
+    const trendingSuggestions = await scrapeKeywordSuggestions(keyword)
+    const trendingKeywords = await Promise.all(
+      trendingSuggestions.map(async (kw) => {
+        const r = await scrapeKeywordResults(kw)
+        return { keyword: kw, resultCount: r.resultCount, competitionScore: r.competitionScore, isRocket: r.isRocket }
+      })
+    )
+
+    // Long-tail = grade/format variations with competition scores
+    const longTail = await scrapeKeywordLongTail(keyword)
     const suggestionsWithScores = await Promise.all(
-      suggestions.slice(0, 5).map(async (sug) => {
+      longTail.slice(0, 8).map(async (sug) => {
         const r = await scrapeKeywordResults(sug)
         return {
           keyword: sug,
@@ -77,23 +86,21 @@ export async function POST(req: NextRequest) {
     )
 
     // Save to cache
+    const saveData = {
+      keyword: keyword.toLowerCase(),
+      resultCount: results.resultCount,
+      competitionScore: results.competitionScore,
+      isRocket: results.isRocket,
+      suggestions: suggestionsWithScores,
+      topProducts: [],
+      lastScrapedAt: new Date(),
+    }
+
     if (keywordData) {
-      keywordData.resultCount = results.resultCount
-      keywordData.competitionScore = results.competitionScore
-      keywordData.isRocket = results.isRocket
-      keywordData.suggestions = suggestionsWithScores
-      keywordData.lastScrapedAt = new Date()
+      Object.assign(keywordData, saveData)
       await keywordData.save()
     } else {
-      keywordData = new KeywordSearch({
-        keyword: keyword.toLowerCase(),
-        resultCount: results.resultCount,
-        competitionScore: results.competitionScore,
-        isRocket: results.isRocket,
-        suggestions: suggestionsWithScores,
-        topProducts: [],
-        lastScrapedAt: new Date(),
-      })
+      keywordData = new KeywordSearch(saveData)
       await keywordData.save()
     }
 
@@ -103,7 +110,7 @@ export async function POST(req: NextRequest) {
       await user.save()
     }
 
-    return NextResponse.json(keywordData)
+    return NextResponse.json({ ...keywordData.toObject(), trending: trendingKeywords })
   } catch (error) {
     console.error('Scrape error:', error)
     return NextResponse.json({ error: 'Failed to scrape keyword data' }, { status: 500 })

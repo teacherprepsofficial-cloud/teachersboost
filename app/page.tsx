@@ -114,7 +114,7 @@ export default function HomePage() {
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Free Plan */}
-            <div className="bg-white rounded-[15px] shadow p-8">
+            <div className="bg-white rounded-[5px] shadow p-8">
               <h4 className="text-2xl font-bold text-gray-900 mb-2">Free</h4>
               <p className="text-gray-600 mb-6 text-sm">Try it out, no card needed</p>
               <div className="text-3xl font-bold text-gray-900 mb-6">$0</div>
@@ -124,13 +124,13 @@ export default function HomePage() {
                 <li className="flex items-center gap-3"><span className="text-gray-400">✗</span><span className="text-gray-400">Shop Optimizer</span></li>
                 <li className="flex items-center gap-3"><span className="text-gray-400">✗</span><span className="text-gray-400">AI Generators</span></li>
               </ul>
-              <Link href="/signup" className="w-full block text-center px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-[15px] hover:bg-gray-50 transition font-semibold">
+              <Link href="/signup" className="w-full block text-center px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-[5px] hover:bg-gray-50 transition font-semibold">
                 Get Started
               </Link>
             </div>
 
             {/* Starter Plan */}
-            <div className="bg-white rounded-[15px] shadow p-8">
+            <div className="bg-white rounded-[5px] shadow p-8">
               <h4 className="text-2xl font-bold text-gray-900 mb-2">Starter</h4>
               <p className="text-gray-600 mb-6 text-sm">For sellers doing weekly research</p>
               <div className="text-3xl font-bold text-gray-900 mb-6">$9.99<span className="text-base font-normal text-gray-500">/mo</span></div>
@@ -140,13 +140,13 @@ export default function HomePage() {
                 <li className="flex items-center gap-3"><span className="text-purple-600">✓</span><span className="text-gray-700">Shop Optimizer</span></li>
                 <li className="flex items-center gap-3"><span className="text-gray-400">✗</span><span className="text-gray-400">AI Generators</span></li>
               </ul>
-              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-purple-600 text-white rounded-[15px] hover:bg-purple-700 transition font-semibold">
+              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-purple-600 text-white rounded-[5px] hover:bg-purple-700 transition font-semibold">
                 Get Starter
               </Link>
             </div>
 
             {/* Pro Plan */}
-            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-[15px] shadow p-8 text-white relative">
+            <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-[5px] shadow p-8 text-white relative">
               <div className="absolute -top-4 left-8 bg-orange-400 text-orange-900 px-4 py-1 rounded-full text-sm font-bold">
                 BEST VALUE
               </div>
@@ -161,7 +161,7 @@ export default function HomePage() {
                 <li className="flex items-center gap-3"><span>✓</span><span>Pricing Calculator</span></li>
               </ul>
 
-              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-orange-400 text-orange-900 rounded-[15px] hover:bg-orange-300 transition font-semibold">
+              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-orange-400 text-orange-900 rounded-[5px] hover:bg-orange-300 transition font-semibold">
                 Go Pro
               </Link>
             </div>

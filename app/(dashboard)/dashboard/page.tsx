@@ -78,7 +78,7 @@ export default function DashboardPage() {
                 href={feature.href}
                 className="group"
               >
-                <div className="bg-white rounded-[15px] overflow-hidden shadow hover:shadow-lg transition h-full">
+                <div className="bg-white rounded-[5px] overflow-hidden shadow hover:shadow-lg transition h-full">
                   <div className={`h-2 bg-gradient-to-r ${feature.color}`} />
                   <div className="p-6">
                     <div className="mb-4">
@@ -102,15 +102,15 @@ export default function DashboardPage() {
 
         {/* Stats */}
         <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
-          <div className="bg-white rounded-[15px] p-6 shadow">
+          <div className="bg-white rounded-[5px] p-6 shadow">
             <div className="text-gray-600 text-sm font-semibold mb-1">Total Searches</div>
             <div className="text-3xl font-bold text-gray-900">0</div>
           </div>
-          <div className="bg-white rounded-[15px] p-6 shadow">
+          <div className="bg-white rounded-[5px] p-6 shadow">
             <div className="text-gray-600 text-sm font-semibold mb-1">Products Analyzed</div>
             <div className="text-3xl font-bold text-gray-900">0</div>
           </div>
-          <div className="bg-white rounded-[15px] p-6 shadow">
+          <div className="bg-white rounded-[5px] p-6 shadow">
             <div className="text-gray-600 text-sm font-semibold mb-1">Time Saved</div>
             <div className="text-3xl font-bold text-gray-900">0h</div>
           </div>
