@@ -4,13 +4,13 @@ import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/db'
 import { scrapeKeywordResults, scrapeKeywordSuggestions } from '@/lib/scraper'
 import { KeywordSearch } from '@/models/KeywordSearch'
-import { checkSearchLimit, incrementSearchCount } from '@/lib/freemium'
+import { User } from '@/models/User'
 
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
@@ -20,54 +20,65 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Invalid keyword' }, { status: 400 })
     }
 
-    // Check freemium limits
-    const limit = await checkSearchLimit(session.user.id)
-    if (!limit.allowed) {
-      return NextResponse.json(
-        {
-          error: 'Daily search limit reached',
-          remaining: limit.remaining,
-          limit: limit.limit,
-        },
-        { status: 429 }
-      )
-    }
-
     await connectDB()
 
+    // Look up user by email
+    const user = await User.findOne({ email: session.user.email })
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+
+    // Check freemium limits
+    if (user.plan !== 'pro') {
+      const now = new Date()
+      const lastDate = new Date(user.dailySearchDate)
+      const sameDay =
+        lastDate.getDate() === now.getDate() &&
+        lastDate.getMonth() === now.getMonth() &&
+        lastDate.getFullYear() === now.getFullYear()
+
+      if (!sameDay) {
+        user.dailySearchCount = 0
+        user.dailySearchDate = now
+        await user.save()
+      }
+
+      if (user.dailySearchCount >= 3) {
+        return NextResponse.json(
+          { error: 'Daily search limit reached', remaining: 0, limit: 3 },
+          { status: 429 }
+        )
+      }
+    }
+
     // Check cache first
-    let keywordData = await KeywordSearch.findOne({
-      keyword: keyword.toLowerCase(),
-    })
+    let keywordData = await KeywordSearch.findOne({ keyword: keyword.toLowerCase() })
 
     if (
       keywordData &&
-      new Date().getTime() - new Date(keywordData.lastScrapedAt).getTime() < 86400000 // 24 hours
+      new Date().getTime() - new Date(keywordData.lastScrapedAt).getTime() < 86400000
     ) {
-      // Return cached data
       return NextResponse.json(keywordData)
     }
 
-    // Scrape new data
+    // Scrape main keyword
     const results = await scrapeKeywordResults(keyword)
 
-    // Get suggestions
+    // Get suggestions and scrape each
     const suggestions = await scrapeKeywordSuggestions(keyword)
-
-    // For each suggestion, get its result count
     const suggestionsWithScores = await Promise.all(
       suggestions.slice(0, 5).map(async (sug) => {
-        const suggestionResults = await scrapeKeywordResults(sug)
+        const r = await scrapeKeywordResults(sug)
         return {
           keyword: sug,
-          resultCount: suggestionResults.resultCount,
-          competitionScore: suggestionResults.competitionScore,
-          isRocket: suggestionResults.isRocket,
+          resultCount: r.resultCount,
+          competitionScore: r.competitionScore,
+          isRocket: r.isRocket,
         }
       })
     )
 
-    // Save or update in cache
+    // Save to cache
     if (keywordData) {
       keywordData.resultCount = results.resultCount
       keywordData.competitionScore = results.competitionScore
@@ -88,15 +99,15 @@ export async function POST(req: NextRequest) {
       await keywordData.save()
     }
 
-    // Increment search count for freemium
-    await incrementSearchCount(session.user.id)
+    // Increment usage
+    if (user.plan !== 'pro') {
+      user.dailySearchCount += 1
+      await user.save()
+    }
 
     return NextResponse.json(keywordData)
   } catch (error) {
     console.error('Scrape error:', error)
-    return NextResponse.json(
-      { error: 'Failed to scrape keyword data' },
-      { status: 500 }
-    )
+    return NextResponse.json({ error: 'Failed to scrape keyword data' }, { status: 500 })
   }
 }
