@@ -26,13 +26,10 @@ export async function scrapeKeywordResults(keyword: string): Promise<{
   try {
     const url = `${TPT_BASE}/browse?search=${encodeURIComponent(keyword)}`
     const html = await fetchPage(url)
-    const $ = cheerio.load(html)
 
-    // Extract result count from page text
-    const bodyText = $('body').text()
-    const match = bodyText.match(/(\d+(?:,\d+)?(?:\+)?)\s*results?/i)
-    const rawCount = match ? match[1].replace(/[,+]/g, '') : '0'
-    const resultCount = parseInt(rawCount, 10) || 0
+    // TpT embeds result count as JSON in the HTML
+    const match = html.match(/"totalCount":(\d+)/)
+    const resultCount = match ? parseInt(match[1], 10) : 0
 
     const competitionScore = parseFloat((resultCount / 1000).toFixed(2))
     const isRocket = resultCount < 1000 && resultCount > 0
