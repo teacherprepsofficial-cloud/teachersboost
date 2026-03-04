@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/db'
-import { scraper } from '@/lib/scraper'
+import { scrapeKeywordResults, scrapeKeywordSuggestions } from '@/lib/scraper'
 import { KeywordSearch } from '@/models/KeywordSearch'
 import { checkSearchLimit, incrementSearchCount } from '@/lib/freemium'
 
@@ -49,10 +49,10 @@ export async function POST(req: NextRequest) {
     }
 
     // Scrape new data
-    const results = await scraper.scrapeKeywordResults(keyword)
+    const results = await scrapeKeywordResults(keyword)
 
     // Get suggestions
-    const suggestions = await scraper.scrapeKeywordSuggestions(keyword)
+    const suggestions = await scrapeKeywordSuggestions(keyword)
 
     // For each suggestion, get its result count
     const suggestionsWithScores = await Promise.all(
