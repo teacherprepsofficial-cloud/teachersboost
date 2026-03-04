@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
     // For each suggestion, get its result count
     const suggestionsWithScores = await Promise.all(
       suggestions.slice(0, 5).map(async (sug) => {
-        const suggestionResults = await scraper.scrapeKeywordResults(sug)
+        const suggestionResults = await scrapeKeywordResults(sug)
         return {
           keyword: sug,
           resultCount: suggestionResults.resultCount,
