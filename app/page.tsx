@@ -103,79 +103,66 @@ export default function HomePage() {
 
       {/* Pricing */}
       <section className="py-20 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-6">
-          <h3 className="text-4xl font-bold text-center text-gray-900 mb-16">
+        <div className="max-w-5xl mx-auto px-6">
+          <h3 className="text-4xl font-bold text-center text-gray-900 mb-4">
             Simple Pricing
           </h3>
+          <p className="text-center text-gray-600 mb-16">
+            Start free. Upgrade when you're ready.{' '}
+            <Link href="/pricing" className="text-purple-600 font-semibold hover:underline">See full comparison →</Link>
+          </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Free Plan */}
             <div className="bg-white rounded-[15px] shadow p-8">
               <h4 className="text-2xl font-bold text-gray-900 mb-2">Free</h4>
-              <p className="text-gray-600 mb-6">Perfect for getting started</p>
-
+              <p className="text-gray-600 mb-6 text-sm">Try it out, no card needed</p>
               <div className="text-3xl font-bold text-gray-900 mb-6">$0</div>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <span className="text-purple-600">✓</span>
-                  <span className="text-gray-700">3 keyword searches/day</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className="text-purple-600">✓</span>
-                  <span className="text-gray-700">1 shop analysis/day</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className="text-gray-400">✗</span>
-                  <span className="text-gray-500">AI generators</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span className="text-gray-400">✗</span>
-                  <span className="text-gray-500">Unlimited searches</span>
-                </li>
+              <ul className="space-y-3 mb-8 text-sm">
+                <li className="flex items-center gap-3"><span className="text-purple-600">✓</span><span className="text-gray-700">3 keyword searches/week</span></li>
+                <li className="flex items-center gap-3"><span className="text-purple-600">✓</span><span className="text-gray-700">Keyword Opportunity Grades</span></li>
+                <li className="flex items-center gap-3"><span className="text-gray-400">✗</span><span className="text-gray-400">Shop Optimizer</span></li>
+                <li className="flex items-center gap-3"><span className="text-gray-400">✗</span><span className="text-gray-400">AI Generators</span></li>
               </ul>
-
-              <Link href="/signup" className="w-full block text-center px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition font-semibold">
+              <Link href="/signup" className="w-full block text-center px-6 py-2 border-2 border-gray-300 text-gray-700 rounded-[15px] hover:bg-gray-50 transition font-semibold">
                 Get Started
+              </Link>
+            </div>
+
+            {/* Starter Plan */}
+            <div className="bg-white rounded-[15px] shadow p-8">
+              <h4 className="text-2xl font-bold text-gray-900 mb-2">Starter</h4>
+              <p className="text-gray-600 mb-6 text-sm">For sellers doing weekly research</p>
+              <div className="text-3xl font-bold text-gray-900 mb-6">$9.99<span className="text-base font-normal text-gray-500">/mo</span></div>
+              <ul className="space-y-3 mb-8 text-sm">
+                <li className="flex items-center gap-3"><span className="text-purple-600">✓</span><span className="text-gray-700">30 keyword searches/month</span></li>
+                <li className="flex items-center gap-3"><span className="text-purple-600">✓</span><span className="text-gray-700">Keyword Opportunity Grades</span></li>
+                <li className="flex items-center gap-3"><span className="text-purple-600">✓</span><span className="text-gray-700">Shop Optimizer</span></li>
+                <li className="flex items-center gap-3"><span className="text-gray-400">✗</span><span className="text-gray-400">AI Generators</span></li>
+              </ul>
+              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-purple-600 text-white rounded-[15px] hover:bg-purple-700 transition font-semibold">
+                Get Starter
               </Link>
             </div>
 
             {/* Pro Plan */}
             <div className="bg-gradient-to-br from-purple-500 to-purple-600 rounded-[15px] shadow p-8 text-white relative">
-              <div className="absolute -top-4 left-8 bg-orange-400 text-orange-900 px-4 py-1 rounded-full text-sm font-semibold">
-                POPULAR
+              <div className="absolute -top-4 left-8 bg-orange-400 text-orange-900 px-4 py-1 rounded-full text-sm font-bold">
+                BEST VALUE
               </div>
-
               <h4 className="text-2xl font-bold mb-2">Pro</h4>
-              <p className="text-purple-100 mb-6">For serious TpT sellers</p>
-
-              <div className="text-3xl font-bold mb-6">$9.99<span className="text-lg">/mo</span></div>
-
-              <ul className="space-y-3 mb-8">
-                <li className="flex items-center gap-3">
-                  <span>✓</span>
-                  <span>Unlimited keyword searches</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span>✓</span>
-                  <span>Unlimited shop analysis</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span>✓</span>
-                  <span>AI title & description generators</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span>✓</span>
-                  <span>Pricing calculator</span>
-                </li>
-                <li className="flex items-center gap-3">
-                  <span>✓</span>
-                  <span>Priority support</span>
-                </li>
+              <p className="text-purple-100 mb-6 text-sm">For sellers who want every edge</p>
+              <div className="text-3xl font-bold mb-6">$14.99<span className="text-base font-normal text-purple-200">/mo</span></div>
+              <ul className="space-y-3 mb-8 text-sm">
+                <li className="flex items-center gap-3"><span>✓</span><span>Unlimited keyword searches</span></li>
+                <li className="flex items-center gap-3"><span>✓</span><span>Shop Optimizer</span></li>
+                <li className="flex items-center gap-3"><span>✓</span><span>AI Title Generator</span></li>
+                <li className="flex items-center gap-3"><span>✓</span><span>AI Description Generator</span></li>
+                <li className="flex items-center gap-3"><span>✓</span><span>Pricing Calculator</span></li>
               </ul>
 
-              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-orange-400 text-orange-900 rounded-lg hover:bg-orange-300 transition font-semibold">
-                Start Free Trial
+              <Link href="/signup" className="w-full block text-center px-6 py-2 bg-orange-400 text-orange-900 rounded-[15px] hover:bg-orange-300 transition font-semibold">
+                Go Pro
               </Link>
             </div>
           </div>
