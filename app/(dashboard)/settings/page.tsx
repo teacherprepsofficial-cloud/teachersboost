@@ -61,9 +61,10 @@ function SettingsInner() {
   const [upgrading, setUpgrading] = useState<string | null>(null)
   const [billing, setBilling]     = useState<'monthly' | 'annual'>('monthly')
 
-  // Cancel
-  const [cancelling, setCancelling]             = useState(false)
+  // Cancel / plan switch confirmations
+  const [cancelling, setCancelling]               = useState(false)
   const [showCancelConfirm, setShowCancelConfirm] = useState(false)
+  const [pendingSwitch, setPendingSwitch]         = useState<string | null>(null) // 'pro' | 'starter'
 
   // Billing portal
   const [openingPortal, setOpeningPortal] = useState(false)
@@ -249,15 +250,6 @@ function SettingsInner() {
           <h2 className="text-lg font-bold text-gray-900 mb-5">Profile</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
-              <input
-                type="email"
-                value={session?.user?.email || ''}
-                disabled
-                className="w-full px-4 py-2 border border-gray-200 rounded-[5px] bg-[#F1F5F9] text-gray-500 cursor-not-allowed"
-              />
-            </div>
-            <div>
               <label className="block text-sm font-semibold text-gray-700 mb-1">Name</label>
               <input
                 type="text"
@@ -267,7 +259,16 @@ function SettingsInner() {
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Timezone</label>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                value={session?.user?.email || ''}
+                disabled
+                className="w-full px-4 py-2 border border-gray-200 rounded-[5px] bg-[#F1F5F9] text-gray-500 cursor-not-allowed"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-semibold text-gray-700 mb-1">Timezone — used for date in top left corner</label>
               <select
                 value={timezone}
                 onChange={(e) => setTimezone(e.target.value)}
@@ -392,129 +393,9 @@ function SettingsInner() {
           )}
         </section>
 
-        {/* ── Upgrade (free users) ── */}
-        {plan === 'free' && (
-          <section className="bg-rose-50 border-2 border-rose-200 rounded-[5px] p-6 mb-5">
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Upgrade Your Plan</h2>
-            <p className="text-sm text-gray-600 mb-5">Get unlimited keyword searches and AI-powered tools.</p>
-
-            <div className="flex gap-2 mb-5">
-              <button
-                onClick={() => setBilling('monthly')}
-                className={`flex-1 py-2 rounded-[5px] text-sm font-semibold border transition ${billing === 'monthly' ? 'bg-rose-600 border-rose-600 text-white' : 'bg-white border-gray-200 text-gray-600 hover:border-rose-400'}`}
-              >Monthly</button>
-              <button
-                onClick={() => setBilling('annual')}
-                className={`flex-1 py-2 rounded-[5px] text-sm font-semibold border transition ${billing === 'annual' ? 'bg-rose-600 border-rose-600 text-white' : 'bg-white border-gray-200 text-gray-600 hover:border-rose-400'}`}
-              >Annual <span className="text-xs font-normal">(save 20%)</span></button>
-            </div>
-
-            <div className="flex gap-3 flex-wrap">
-              <button
-                onClick={() => handleCheckout(billing === 'annual' ? 'starter_annual' : 'starter_monthly')}
-                disabled={upgrading !== null}
-                className="bg-rose-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-rose-700 transition disabled:opacity-60 text-sm"
-              >
-                {upgrading?.startsWith('starter') ? 'Redirecting...' : `Boost Plan — $${billing === 'annual' ? '7.99' : '9.99'}/month`}
-              </button>
-              <button
-                onClick={() => handleCheckout(billing === 'annual' ? 'pro_annual' : 'pro_monthly')}
-                disabled={upgrading !== null}
-                className="bg-gray-900 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-gray-800 transition disabled:opacity-60 text-sm"
-              >
-                {upgrading?.startsWith('pro') ? 'Redirecting...' : `Pro Plan — $${billing === 'annual' ? '11.99' : '14.99'}/month`}
-              </button>
-            </div>
-          </section>
-        )}
-
-        {/* ── Switch plan (starter → pro or pro → starter) ── */}
-        {isPaidPlan && !cancelAtPeriodEnd && (
-          <section className="bg-white rounded-[5px] border border-gray-200 p-6 mb-5">
-            <h2 className="text-lg font-bold text-gray-900 mb-1">
-              {plan === 'starter' ? 'Upgrade to Pro' : 'Switch Plan'}
-            </h2>
-            <p className="text-sm text-gray-500 mb-5">
-              {plan === 'starter'
-                ? 'Get 75 monthly AI uses and advanced features.'
-                : 'Switch between monthly and annual, or adjust your plan.'}
-            </p>
-
-            <div className="flex gap-2 mb-5">
-              <button
-                onClick={() => setBilling('monthly')}
-                className={`flex-1 py-2 rounded-[5px] text-sm font-semibold border transition ${billing === 'monthly' ? 'bg-rose-600 border-rose-600 text-white' : 'bg-white border-gray-200 text-gray-600 hover:border-rose-400'}`}
-              >Monthly</button>
-              <button
-                onClick={() => setBilling('annual')}
-                className={`flex-1 py-2 rounded-[5px] text-sm font-semibold border transition ${billing === 'annual' ? 'bg-rose-600 border-rose-600 text-white' : 'bg-white border-gray-200 text-gray-600 hover:border-rose-400'}`}
-              >Annual <span className="text-xs font-normal">(save 20%)</span></button>
-            </div>
-
-            <div className="flex gap-3 flex-wrap">
-              {plan === 'starter' && (
-                <button
-                  onClick={() => handleSwitchPlan(billing === 'annual' ? 'pro_annual' : 'pro_monthly')}
-                  disabled={upgrading !== null}
-                  className="bg-rose-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-rose-700 transition disabled:opacity-60 text-sm"
-                >
-                  {upgrading?.startsWith('pro') ? 'Switching...' : `Upgrade to Pro — $${billing === 'annual' ? '11.99' : '14.99'}/mo`}
-                </button>
-              )}
-              {plan === 'pro' && (
-                <button
-                  onClick={() => handleSwitchPlan(billing === 'annual' ? 'starter_annual' : 'starter_monthly')}
-                  disabled={upgrading !== null}
-                  className="border border-gray-300 text-gray-700 px-5 py-2.5 rounded-[5px] font-semibold hover:bg-[#F1F5F9] transition disabled:opacity-60 text-sm"
-                >
-                  {upgrading?.startsWith('starter') ? 'Switching...' : `Downgrade to Boost — $${billing === 'annual' ? '7.99' : '9.99'}/mo`}
-                </button>
-              )}
-            </div>
-            <p className="text-xs text-gray-400 mt-3">Changes are prorated and charged immediately.</p>
-          </section>
-        )}
-
-        {/* ── Cancel subscription ── */}
-        {isPaidPlan && !cancelAtPeriodEnd && (
-          <section className="bg-white rounded-[5px] border border-gray-200 p-6 mb-5">
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Cancel Subscription</h2>
-            <p className="text-sm text-gray-500 mb-5">
-              Your subscription will remain active until {renewalDate || 'the end of your billing period'}, then downgrade to the free plan. You won't be charged again.
-            </p>
-            {!showCancelConfirm ? (
-              <button
-                onClick={() => setShowCancelConfirm(true)}
-                className="border border-red-300 text-red-600 px-5 py-2.5 rounded-[5px] font-semibold hover:bg-red-50 transition text-sm"
-              >
-                Cancel Subscription
-              </button>
-            ) : (
-              <div className="space-y-3">
-                <p className="text-sm font-semibold text-red-700">Are you sure? Your plan will cancel at the end of the billing period.</p>
-                <div className="flex gap-3 flex-wrap">
-                  <button
-                    onClick={handleCancel}
-                    disabled={cancelling}
-                    className="bg-red-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-red-700 transition disabled:opacity-60 text-sm"
-                  >
-                    {cancelling ? 'Cancelling...' : 'Yes, Cancel My Subscription'}
-                  </button>
-                  <button
-                    onClick={() => setShowCancelConfirm(false)}
-                    className="px-5 py-2.5 rounded-[5px] border border-gray-200 font-semibold text-gray-700 hover:bg-[#F1F5F9] transition text-sm"
-                  >
-                    Keep My Plan
-                  </button>
-                </div>
-              </div>
-            )}
-          </section>
-        )}
-
-        {/* ── Security ── */}
+        {/* ── Update Password ── */}
         <section className="bg-white rounded-[5px] border border-gray-200 p-6 mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-5">Security</h2>
+          <h2 className="text-lg font-bold text-gray-900 mb-5">Update Password</h2>
 
           {hasPassword === null ? (
             <div className="h-8 bg-gray-100 rounded animate-pulse w-40" />
@@ -529,59 +410,232 @@ function SettingsInner() {
                   {pwResult.msg}
                 </div>
               )}
-              {!showPasswordForm ? (
+              <form onSubmit={handleChangePassword} className="space-y-4 max-w-sm">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">Current Password</label>
+                  <input
+                    type="password"
+                    value={currentPw}
+                    onChange={(e) => setCurrentPw(e.target.value)}
+                    required
+                    className="w-full px-4 py-2 border border-gray-200 rounded-[5px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
+                  <input
+                    type="password"
+                    value={newPw}
+                    onChange={(e) => setNewPw(e.target.value)}
+                    required
+                    minLength={8}
+                    className="w-full px-4 py-2 border border-gray-200 rounded-[5px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
+                  />
+                  <p className="text-xs text-gray-400 mt-1">Minimum 8 characters</p>
+                </div>
                 <button
-                  onClick={() => setShowPasswordForm(true)}
-                  className="flex items-center gap-2 text-sm font-semibold text-gray-700 border border-gray-200 px-4 py-2.5 rounded-[5px] hover:bg-[#F1F5F9] transition"
+                  type="submit"
+                  disabled={pwSaving}
+                  className="bg-rose-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-rose-700 transition disabled:opacity-60 text-sm"
                 >
-                  <KeyRound size={14} />
-                  Change Password
+                  {pwSaving ? 'Updating...' : 'Change now'}
                 </button>
-              ) : (
-                <form onSubmit={handleChangePassword} className="space-y-4 max-w-sm">
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">Current Password</label>
-                    <input
-                      type="password"
-                      value={currentPw}
-                      onChange={(e) => setCurrentPw(e.target.value)}
-                      required
-                      className="w-full px-4 py-2 border border-gray-200 rounded-[5px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-1">New Password</label>
-                    <input
-                      type="password"
-                      value={newPw}
-                      onChange={(e) => setNewPw(e.target.value)}
-                      required
-                      minLength={8}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-[5px] text-gray-900 focus:outline-none focus:ring-2 focus:ring-rose-500"
-                    />
-                    <p className="text-xs text-gray-400 mt-1">Minimum 8 characters</p>
-                  </div>
-                  <div className="flex gap-3">
-                    <button
-                      type="submit"
-                      disabled={pwSaving}
-                      className="bg-rose-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-rose-700 transition disabled:opacity-60 text-sm"
-                    >
-                      {pwSaving ? 'Updating...' : 'Update Password'}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => { setShowPasswordForm(false); setPwResult(null) }}
-                      className="px-5 py-2.5 rounded-[5px] border border-gray-200 font-semibold text-gray-700 hover:bg-[#F1F5F9] transition text-sm"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                </form>
-              )}
+              </form>
             </div>
           )}
         </section>
+
+        {/* ── Change My Subscription ── */}
+        {plan !== 'admin' && (
+          <section className="bg-white rounded-[5px] border border-gray-200 p-6 mb-5">
+            <h2 className="text-lg font-bold text-gray-900 mb-1">Change My Subscription</h2>
+            <p className="text-sm text-gray-500 mb-5">
+              Select a plan below. Your current plan is highlighted.
+            </p>
+
+            {/* Pending cancellation notice */}
+            {cancelAtPeriodEnd && renewalDate && (
+              <div className="mb-5 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-[5px] px-4 py-3">
+                <AlertTriangle size={14} className="text-amber-600 mt-0.5 shrink-0" />
+                <p className="text-sm text-amber-700 font-medium">
+                  Your subscription is set to cancel on {renewalDate}. You'll keep full access until then. To stay subscribed, select a plan below.
+                </p>
+              </div>
+            )}
+
+            {/* Billing toggle — only shown when not on free */}
+            {plan !== 'free' && !cancelAtPeriodEnd && (
+              <div className="flex gap-2 mb-5 max-w-xs">
+                <button
+                  onClick={() => setBilling('monthly')}
+                  className={`flex-1 py-2 rounded-[5px] text-sm font-semibold border transition ${billing === 'monthly' ? 'bg-rose-600 border-rose-600 text-white' : 'bg-white border-gray-200 text-gray-600 hover:border-rose-400'}`}
+                >Monthly</button>
+                <button
+                  onClick={() => setBilling('annual')}
+                  className={`flex-1 py-2 rounded-[5px] text-sm font-semibold border transition ${billing === 'annual' ? 'bg-rose-600 border-rose-600 text-white' : 'bg-white border-gray-200 text-gray-600 hover:border-rose-400'}`}
+                >Annual <span className="text-xs font-normal opacity-80">(save 20%)</span></button>
+              </div>
+            )}
+
+            {/* Plan cards */}
+            <div className="space-y-3">
+
+              {/* Free tier */}
+              <div className={`rounded-[5px] border p-4 flex items-center justify-between gap-4 ${plan === 'free' ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white'}`}>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Free Plan</p>
+                  <p className="text-xs text-gray-500 mt-0.5">3 keyword searches/week · No AI tools · No saves</p>
+                </div>
+                <div className="shrink-0">
+                  {plan === 'free' ? (
+                    <span className="text-xs font-bold text-rose-600 bg-rose-100 px-3 py-1.5 rounded-[5px]">Current Plan</span>
+                  ) : !cancelAtPeriodEnd ? (
+                    <button
+                      onClick={() => setShowCancelConfirm(true)}
+                      disabled={upgrading !== null || cancelling}
+                      className="text-xs font-semibold text-gray-500 border border-gray-300 px-3 py-1.5 rounded-[5px] hover:bg-[#F1F5F9] hover:text-gray-700 transition disabled:opacity-50"
+                    >
+                      Downgrade to Free
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+
+              {/* Boost / Starter tier */}
+              <div className={`rounded-[5px] border p-4 flex items-center justify-between gap-4 ${plan === 'starter' && !cancelAtPeriodEnd ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white'}`}>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Boost Plan <span className="text-gray-400 font-normal">— $9.99/month</span></p>
+                  <p className="text-xs text-gray-500 mt-0.5">Unlimited searches · 20 AI uses/month · 50 saves</p>
+                </div>
+                <div className="shrink-0">
+                  {plan === 'starter' && !cancelAtPeriodEnd ? (
+                    <span className="text-xs font-bold text-rose-600 bg-rose-100 px-3 py-1.5 rounded-[5px]">Current Plan</span>
+                  ) : plan === 'free' ? (
+                    <button
+                      onClick={() => handleCheckout(billing === 'annual' ? 'starter_annual' : 'starter_monthly')}
+                      disabled={upgrading !== null}
+                      className="text-xs font-semibold text-rose-600 border border-rose-600 bg-transparent hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-[5px] transition disabled:opacity-50"
+                    >
+                      {upgrading?.startsWith('starter') ? 'Redirecting...' : 'Upgrade Now'}
+                    </button>
+                  ) : plan === 'pro' && !cancelAtPeriodEnd ? (
+                    <button
+                      onClick={() => setPendingSwitch('starter')}
+                      disabled={upgrading !== null}
+                      className="text-xs font-semibold text-gray-600 border border-gray-300 px-3 py-1.5 rounded-[5px] hover:bg-[#F1F5F9] transition disabled:opacity-50"
+                    >
+                      Downgrade
+                    </button>
+                  ) : cancelAtPeriodEnd ? (
+                    <button
+                      onClick={() => handleCheckout(billing === 'annual' ? 'starter_annual' : 'starter_monthly')}
+                      disabled={upgrading !== null}
+                      className="text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 px-3 py-1.5 rounded-[5px] transition disabled:opacity-50"
+                    >
+                      {upgrading?.startsWith('starter') ? 'Redirecting...' : 'Reactivate on Boost'}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+
+              {/* Pro tier */}
+              <div className={`rounded-[5px] border p-4 flex items-center justify-between gap-4 ${plan === 'pro' && !cancelAtPeriodEnd ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white'}`}>
+                <div>
+                  <p className="text-sm font-bold text-gray-900">Pro Plan <span className="text-gray-400 font-normal">— $14.99/month</span></p>
+                  <p className="text-xs text-gray-500 mt-0.5">Unlimited searches · 75 AI uses/month · 100 saves</p>
+                </div>
+                <div className="shrink-0">
+                  {plan === 'pro' && !cancelAtPeriodEnd ? (
+                    <span className="text-xs font-bold text-rose-600 bg-rose-100 px-3 py-1.5 rounded-[5px]">Current Plan</span>
+                  ) : plan === 'free' ? (
+                    <button
+                      onClick={() => handleCheckout(billing === 'annual' ? 'pro_annual' : 'pro_monthly')}
+                      disabled={upgrading !== null}
+                      className="text-xs font-semibold text-rose-600 border border-rose-600 bg-transparent hover:bg-rose-600 hover:text-white px-3 py-1.5 rounded-[5px] transition disabled:opacity-50"
+                    >
+                      {upgrading?.startsWith('pro') ? 'Redirecting...' : 'Upgrade Now'}
+                    </button>
+                  ) : plan === 'starter' && !cancelAtPeriodEnd ? (
+                    <button
+                      onClick={() => setPendingSwitch('pro')}
+                      disabled={upgrading !== null}
+                      className="text-xs font-semibold text-white bg-rose-600 hover:bg-rose-700 px-3 py-1.5 rounded-[5px] transition disabled:opacity-50"
+                    >
+                      Upgrade
+                    </button>
+                  ) : cancelAtPeriodEnd ? (
+                    <button
+                      onClick={() => handleCheckout(billing === 'annual' ? 'pro_annual' : 'pro_monthly')}
+                      disabled={upgrading !== null}
+                      className="text-xs font-semibold text-white bg-gray-900 hover:bg-gray-800 px-3 py-1.5 rounded-[5px] transition disabled:opacity-50"
+                    >
+                      {upgrading?.startsWith('pro') ? 'Redirecting...' : 'Reactivate on Pro'}
+                    </button>
+                  ) : null}
+                </div>
+              </div>
+
+            </div>
+
+            {/* Confirmation: downgrade paid → free */}
+            {showCancelConfirm && (
+              <div className="mt-5 bg-red-50 border border-red-200 rounded-[5px] p-4 space-y-3">
+                <p className="text-sm font-bold text-red-700">Downgrade to Free Plan?</p>
+                <p className="text-sm text-red-600">
+                  You'll keep {plan === 'pro' ? 'Pro' : 'Boost'} access until {renewalDate || 'the end of your billing period'}, then your account will move to the free plan. You won't be charged again.
+                </p>
+                <div className="flex gap-3 flex-wrap">
+                  <button
+                    onClick={handleCancel}
+                    disabled={cancelling}
+                    className="bg-red-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-red-700 transition disabled:opacity-60 text-sm"
+                  >
+                    {cancelling ? 'Confirming...' : 'Yes, Downgrade to Free'}
+                  </button>
+                  <button
+                    onClick={() => setShowCancelConfirm(false)}
+                    className="px-5 py-2.5 rounded-[5px] border border-gray-200 font-semibold text-gray-700 hover:bg-[#F1F5F9] transition text-sm"
+                  >
+                    Keep My Plan
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {/* Confirmation: switch between paid tiers */}
+            {pendingSwitch && (
+              <div className="mt-5 bg-gray-50 border border-gray-200 rounded-[5px] p-4 space-y-3">
+                <p className="text-sm font-bold text-gray-900">
+                  {pendingSwitch === 'pro' ? 'Upgrade to Pro Plan?' : 'Downgrade to Boost Plan?'}
+                </p>
+                <p className="text-sm text-gray-600">
+                  {pendingSwitch === 'pro'
+                    ? `Your card will be charged a prorated amount today. You'll have Pro access immediately.`
+                    : `Your card will be credited a prorated amount. Boost access starts immediately.`}
+                </p>
+                <div className="flex gap-3 flex-wrap">
+                  <button
+                    onClick={() => { handleSwitchPlan(billing === 'annual' ? `${pendingSwitch}_annual` : `${pendingSwitch}_monthly`); setPendingSwitch(null) }}
+                    disabled={upgrading !== null}
+                    className="bg-rose-600 text-white px-5 py-2.5 rounded-[5px] font-semibold hover:bg-rose-700 transition disabled:opacity-60 text-sm"
+                  >
+                    {upgrading !== null ? 'Switching...' : 'Yes, Confirm Change'}
+                  </button>
+                  <button
+                    onClick={() => setPendingSwitch(null)}
+                    className="px-5 py-2.5 rounded-[5px] border border-gray-200 font-semibold text-gray-700 hover:bg-[#F1F5F9] transition text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            )}
+
+            {isPaidPlan && !cancelAtPeriodEnd && (
+              <p className="text-xs text-gray-400 mt-4">Paid plan changes are prorated. To update your payment method, use the Manage Billing button above.</p>
+            )}
+          </section>
+        )}
 
         {/* ── Danger Zone ── */}
         <section className="bg-white rounded-[5px] border border-red-200 p-6">
