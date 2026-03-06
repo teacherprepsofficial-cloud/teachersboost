@@ -43,9 +43,13 @@ function planBadgeColor(plan: string | undefined) {
 }
 
 function SettingsInner() {
-  const { data: session, update } = useSession()
+  const { data: session, update, status } = useSession()
   const router = useRouter()
   const searchParams = useSearchParams()
+
+  useEffect(() => {
+    if (status === 'unauthenticated') router.push('/login?callbackUrl=/settings')
+  }, [status, router])
   const justUpgraded = searchParams.get('upgraded') === '1'
 
   const [name, setName]         = useState('')

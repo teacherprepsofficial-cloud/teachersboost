@@ -19,6 +19,6 @@ export default withAuth(
 export const config = {
   matcher: [
     '/admin/:path*', '/onboarding',
-    '/saved-keywords/:path*', '/settings/:path*',
+    '/saved-keywords/:path*', '/settings',
   ],
 }
