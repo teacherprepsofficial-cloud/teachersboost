@@ -20,11 +20,11 @@ const plans = [
     badge: null as string | null,
     stripePlan: null as string | null,
     features: [
-      'Keyword Research — 3 searches/week',
-      'Keyword Difficulty Score',
-      'Top Competing Products',
-      'Related Keyword Variations',
-      'Niche Finder — 5 searches/month (top 5 results)',
+      { label: 'Keyword Research — 3 searches/week', highlight: false },
+      { label: 'Keyword Difficulty Score', highlight: false },
+      { label: 'Top Competing Products', highlight: false },
+      { label: 'Related Keyword Variations', highlight: false },
+      { label: 'Niche Finder — 5 searches/month (top 5 results)', highlight: false },
     ],
   },
   {
@@ -41,11 +41,16 @@ const plans = [
     badge: null as string | null,
     stripePlan: 'starter',
     features: [
-      'Unlimited Keyword Research',
-      'Niche Finder — unlimited searches (top 25 results)',
-      'Save up to 50 Keywords',
-      'Title Generator — 20/month',
-      'Description Writer — 20/month',
+      { label: 'Keyword Research — 3 searches/week', highlight: false },
+      { label: 'Keyword Difficulty Score', highlight: false },
+      { label: 'Top Competing Products', highlight: false },
+      { label: 'Related Keyword Variations', highlight: false },
+      { label: 'Niche Finder — 5 searches/month (top 5 results)', highlight: false },
+      { label: 'Unlimited Keyword Research', highlight: false },
+      { label: 'Niche Finder — unlimited searches (top 25 results)', highlight: false },
+      { label: 'Save up to 50 Keywords', highlight: false },
+      { label: 'Title Generator — 20/month', highlight: false },
+      { label: 'Description Writer — 20/month', highlight: false },
     ],
   },
   {
@@ -62,9 +67,14 @@ const plans = [
     badge: 'BEST VALUE',
     stripePlan: 'pro',
     features: [
-      'Save up to 100 Keywords',
-      'Title Generator — 75/month',
-      'Description Writer — 75/month',
+      { label: 'Keyword Research — 3 searches/week', highlight: false },
+      { label: 'Keyword Difficulty Score', highlight: false },
+      { label: 'Top Competing Products', highlight: false },
+      { label: 'Related Keyword Variations', highlight: false },
+      { label: 'Niche Finder — unlimited searches (top 25 results)', highlight: false },
+      { label: 'Save up to 100 Keywords', highlight: true },
+      { label: 'Title Generator — 75/month', highlight: true },
+      { label: 'Description Writer — 75/month', highlight: true },
     ],
   },
 ]
@@ -192,9 +202,11 @@ export default function PricingPage() {
                   )}
                   <ul className="space-y-2.5">
                     {plan.features.map((f) => (
-                      <li key={f} className="flex items-start gap-2.5">
-                        <Check size={15} className="text-rose-500 shrink-0 mt-0.5" />
-                        <span className="text-xs leading-snug text-gray-700">{f}</span>
+                      <li key={f.label} className="flex items-start gap-2.5">
+                        <Check size={15} className={`shrink-0 mt-0.5 ${f.highlight ? 'text-rose-600' : 'text-rose-500'}`} />
+                        <span className={`text-xs leading-snug font-${f.highlight ? 'semibold' : 'normal'} ${f.highlight ? 'text-rose-600' : 'text-gray-700'}`}>
+                          {f.label}
+                        </span>
                       </li>
                     ))}
                   </ul>
