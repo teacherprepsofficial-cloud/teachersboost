@@ -60,9 +60,42 @@ export default function KeywordsPage() {
       .catch(() => setTrendingError(true))
   }, [])
 
+  const BANNED_WORDS = [
+    'fuck','fucker','fucking','fucked','fück',
+    'shit','shitting','shitter','bullshit',
+    'bitch','bitches','bitching',
+    'ass','asshole','asses',
+    'dick','dicks','dickhead',
+    'cock','cocks','cocksucker',
+    'pussy','pussies',
+    'cunt','cunts',
+    'bastard','bastards',
+    'damn','damnit',
+    'hell',
+    'nigger','nigga','niggas',
+    'faggot','fag','fags',
+    'whore','whores',
+    'slut','sluts',
+    'piss','pissed',
+    'porn','porno',
+    'sex','sexy','sexting',
+    'rape','rapist',
+    'motherfucker','motherfucking',
+    'jackass','dumbass','smartass',
+  ]
+
+  function containsProfanity(text: string): boolean {
+    const words = text.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
+    return words.some(w => BANNED_WORDS.includes(w))
+  }
+
   const handleSearch = async (kw?: string) => {
     const query = kw || searchInput
     if (!query.trim()) return
+    if (containsProfanity(query)) {
+      setError('Please keep searches school-appropriate. TeachersBoost is a tool for educators.')
+      return
+    }
     if (!session?.user?.email) {
       setShowSignupModal(true)
       return
@@ -261,7 +294,7 @@ export default function KeywordsPage() {
             <input
               type="text"
               value={searchInput}
-              onChange={(e) => { setSearchInput(e.target.value); setTypedKeyword(e.target.value) }}
+              onChange={(e) => { setSearchInput(e.target.value); setTypedKeyword(e.target.value); if (error) setError('') }}
               placeholder="3rd grade math review spiral"
               className="w-full px-5 py-4 border-2 border-gray-300 rounded-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
             />
@@ -279,7 +312,7 @@ export default function KeywordsPage() {
             <input
               type="text"
               value={searchInput}
-              onChange={(e) => { setSearchInput(e.target.value); setTypedKeyword(e.target.value) }}
+              onChange={(e) => { setSearchInput(e.target.value); setTypedKeyword(e.target.value); if (error) setError('') }}
               placeholder="3rd grade math review spiral with answers"
               className="flex-1 px-5 py-4 border-2 border-gray-300 border-r-0 rounded-l-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
             />
