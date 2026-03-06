@@ -248,7 +248,8 @@ export default function KeywordBreakdownPage() {
 
       <div className="max-w-6xl mx-auto p-8">
 
-        <div className="flex items-start justify-between mb-8">
+        {/* Desktop: side by side */}
+        <div className="hidden md:flex items-start justify-between mb-8">
           <div>
             <h1 className="text-4xl font-extrabold text-slate-900 mb-1 capitalize">{data.keyword}</h1>
             <p className="text-slate-400 text-sm tracking-wide uppercase">Live analysis · TpT keyword data</p>
@@ -267,6 +268,29 @@ export default function KeywordBreakdownPage() {
               {isSaved ? 'Saved' : 'Save Keyword'}
             </button>
             {toast && <p className="text-xs text-slate-500">{toast}</p>}
+          </div>
+        </div>
+
+        {/* Mobile: stacked */}
+        <div className="md:hidden flex flex-col gap-3 mb-8">
+          <div>
+            <h1 className="text-4xl font-extrabold text-slate-900 mb-1 capitalize">{data.keyword}</h1>
+            <p className="text-slate-400 text-sm tracking-wide uppercase">Live analysis · TpT keyword data</p>
+          </div>
+          <div className="flex flex-col gap-1">
+            <button
+              onClick={toggleSave}
+              disabled={saving}
+              className={`w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-[5px] border text-sm font-bold transition ${
+                isSaved
+                  ? 'bg-rose-600 border-rose-600 text-white hover:bg-rose-700'
+                  : 'bg-white border-gray-200 text-slate-600 hover:border-rose-400 hover:text-rose-600'
+              }`}
+            >
+              {isSaved ? <BookmarkCheck size={15} /> : <Bookmark size={15} />}
+              {isSaved ? 'Saved' : 'Save Keyword'}
+            </button>
+            {toast && <p className="text-xs text-slate-500 text-center">{toast}</p>}
           </div>
         </div>
 
@@ -320,13 +344,26 @@ export default function KeywordBreakdownPage() {
         </div>
 
         {/* View on TpT */}
-        <div className="bg-white border border-gray-200 rounded-[5px] px-8 py-5 flex items-center justify-between">
+        {/* Desktop: side by side */}
+        <div className="hidden md:flex bg-white border border-gray-200 rounded-[5px] px-8 py-5 items-center justify-between">
           <p className="text-sm text-slate-500">Research all <span className="font-bold text-slate-800">{data.resultCount.toLocaleString()}</span> products ranking for this keyword on TpT</p>
           <a
             href={`https://www.teacherspayteachers.com/browse?search=${encodeURIComponent(data.keyword)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold px-5 py-2.5 rounded-[5px] transition"
+          >
+            View on TpT <ExternalLink size={14} />
+          </a>
+        </div>
+        {/* Mobile: stacked */}
+        <div className="md:hidden bg-white border border-gray-200 rounded-[5px] px-6 py-5 flex flex-col gap-3">
+          <p className="text-sm text-slate-500">Research all <span className="font-bold text-slate-800">{data.resultCount.toLocaleString()}</span> products ranking for this keyword on TpT</p>
+          <a
+            href={`https://www.teacherspayteachers.com/browse?search=${encodeURIComponent(data.keyword)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full flex items-center justify-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold px-5 py-3 rounded-[5px] transition"
           >
             View on TpT <ExternalLink size={14} />
           </a>
@@ -352,8 +389,8 @@ export default function KeywordBreakdownPage() {
                     <tr>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Keyword</th>
                       <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Keyword Difficulty</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Competition Score</th>
-                      <th className="px-4 py-3 text-left text-sm font-semibold text-slate-700">Results</th>
+                      <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-slate-700">Competition Score</th>
+                      <th className="hidden md:table-cell px-4 py-3 text-left text-sm font-semibold text-slate-700">Results</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -378,8 +415,8 @@ export default function KeywordBreakdownPage() {
                             )}
                           </td>
                           <td className={`px-4 py-3 text-sm font-semibold ${g.color}`} style={g.colorStyle}>{g.label}</td>
-                          <td className="px-4 py-3 text-sm font-black text-gray-800">{Math.min(Math.round(row.competitionScore), 100)}</td>
-                          <td className="px-4 py-3 text-sm text-slate-500">{row.resultCount.toLocaleString()}</td>
+                          <td className="hidden md:table-cell px-4 py-3 text-sm font-black text-gray-800">{Math.min(Math.round(row.competitionScore), 100)}</td>
+                          <td className="hidden md:table-cell px-4 py-3 text-sm text-slate-500">{row.resultCount.toLocaleString()}</td>
                         </tr>
                       )
                     })}

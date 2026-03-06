@@ -1,5 +1,42 @@
 'use client'
 
+import { useState, useCallback } from 'react'
+import { Sidebar } from './Sidebar'
+import { TopBar } from './TopBar'
+import { MobileBottomNav } from './MobileBottomNav'
+
+export function DashboardShell({ children }: { children: React.ReactNode }) {
+  const [mobileOpen, setMobileOpen] = useState(false)
+
+  const handleMobileMenuOpen = useCallback((setter: (v: boolean) => void) => {
+    // no-op: we manage state here
+  }, [])
+
+  return (
+    <div className="flex flex-col h-screen bg-[#F1F5F9]">
+      <TopBar onMobileMenuToggle={() => setMobileOpen(v => !v)} />
+      <div className="flex flex-1 overflow-hidden">
+        <SidebarWithControl isOpen={mobileOpen} setIsOpen={setMobileOpen} />
+        <main className="flex-1 overflow-auto pb-16 md:pb-0">
+          {children}
+        </main>
+      </div>
+      <MobileBottomNav />
+    </div>
+  )
+}
+
+function SidebarWithControl({
+  isOpen,
+  setIsOpen,
+}: {
+  isOpen: boolean
+  setIsOpen: (v: boolean) => void
+}) {
+  return <SidebarControlled isOpen={isOpen} setIsOpen={setIsOpen} />
+}
+
+// Import inline to avoid circular — we inline the controlled sidebar here
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
@@ -7,8 +44,33 @@ import {
   Search, LogOut, TrendingUp, Bookmark, ShieldCheck, Wand2, FileText,
   Telescope, Star, Shield, ScrollText, HelpCircle, DollarSign, Phone, Info, User
 } from 'lucide-react'
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { FeedbackWidget } from './FeedbackWidget'
+
+const menuItems = [
+  { href: '/keywords',              label: 'Keyword Explorer',   icon: Search },
+  { href: '/trending',              label: 'Trending Keywords',   icon: TrendingUp },
+  { href: '/niche-finder',          label: 'Niche Finder',        icon: Telescope },
+  { href: '/title-generator',       label: 'Title Generator',     icon: Wand2 },
+  { href: '/description-generator', label: 'Description Writer',  icon: FileText },
+  { href: '/saved-keywords',        label: 'Keyword Notebook',    icon: Bookmark },
+  { href: '/testimonials',          label: 'Testimonials',        icon: Star },
+]
+
+const footerLinks = [
+  { href: '/faq',     label: 'FAQ',     icon: HelpCircle },
+  { href: '/privacy', label: 'Privacy', icon: Shield },
+  { href: '/terms',   label: 'Terms',   icon: ScrollText },
+]
+
+const mobileNavLinks = [
+  { href: '/pricing',  label: 'Pricing',    icon: DollarSign },
+  { href: '/contact',  label: 'Contact',    icon: Phone },
+  { href: '/about',    label: 'About',      icon: Info },
+  { href: '/settings', label: 'My Account', icon: User },
+]
+
+const ADMIN_EMAILS = ['teachersboost@gmail.com', 'elliottzelinskas@gmail.com']
 
 function LiveDate() {
   const [now, setNow] = useState(new Date())
@@ -24,32 +86,6 @@ function LiveDate() {
   )
 }
 
-const menuItems = [
-  { href: '/keywords',              label: 'Keyword Explorer',  icon: Search },
-  { href: '/trending',              label: 'Trending Keywords',  icon: TrendingUp },
-  { href: '/niche-finder',          label: 'Niche Finder',       icon: Telescope },
-  { href: '/title-generator',       label: 'Title Generator',    icon: Wand2 },
-  { href: '/description-generator', label: 'Description Writer', icon: FileText },
-  { href: '/saved-keywords',        label: 'Keyword Notebook',   icon: Bookmark },
-  { href: '/testimonials',          label: 'Testimonials',       icon: Star },
-]
-
-const footerLinks = [
-  { href: '/faq',     label: 'FAQ',     icon: HelpCircle },
-  { href: '/privacy', label: 'Privacy', icon: Shield },
-  { href: '/terms',   label: 'Terms',   icon: ScrollText },
-]
-
-// Links shown inside mobile drawer only
-const mobileNavLinks = [
-  { href: '/pricing', label: 'Pricing', icon: DollarSign },
-  { href: '/contact', label: 'Contact', icon: Phone },
-  { href: '/about',   label: 'About',   icon: Info },
-  { href: '/settings', label: 'My Account', icon: User },
-]
-
-const ADMIN_EMAILS = ['teachersboost@gmail.com', 'elliottzelinskas@gmail.com']
-
 function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => void; isMobile?: boolean }) {
   const { data: session } = useSession()
   const pathname = usePathname()
@@ -58,17 +94,13 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
   return (
     <div className="flex flex-col h-full w-full bg-white border-r border-gray-200 text-gray-800">
       <LiveDate />
-
-      {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
         {isAdmin && (
           <Link
             href="/admin"
             onClick={onNavigate}
             className={`flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-semibold transition ${
-              pathname === '/admin'
-                ? 'bg-rose-600 text-white'
-                : 'text-gray-700 hover:bg-rose-50 hover:text-gray-900'
+              pathname === '/admin' ? 'bg-rose-600 text-white' : 'text-gray-700 hover:bg-rose-50 hover:text-gray-900'
             }`}
           >
             <ShieldCheck size={16} />
@@ -84,9 +116,7 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
               href={item.href}
               onClick={onNavigate}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-medium transition ${
-                isActive
-                  ? 'bg-rose-50 text-gray-900 font-semibold'
-                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                isActive ? 'bg-rose-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
               }`}
             >
               <Icon size={16} className={isActive ? 'text-rose-600' : 'text-gray-400'} />
@@ -94,8 +124,6 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
             </Link>
           )
         })}
-
-        {/* Footer nav links */}
         <div className="pt-3 mt-3 border-t border-gray-100">
           {footerLinks.map((item) => {
             const Icon = item.icon
@@ -106,9 +134,7 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
                 href={item.href}
                 onClick={onNavigate}
                 className={`flex items-center gap-3 px-3 py-2 rounded-[5px] text-xs font-medium transition ${
-                  isActive
-                    ? 'bg-rose-50 text-gray-900'
-                    : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                  isActive ? 'bg-rose-50 text-gray-900' : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
                 }`}
               >
                 <Icon size={13} className={isActive ? 'text-rose-500' : ''} />
@@ -117,8 +143,6 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
             )
           })}
         </div>
-
-        {/* Mobile-only: Pricing, Contact, About, My Account */}
         {isMobile && (
           <div className="pt-3 mt-3 border-t border-gray-100">
             {mobileNavLinks.map((item) => {
@@ -130,9 +154,7 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
                   href={item.href}
                   onClick={onNavigate}
                   className={`flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-medium transition ${
-                    isActive
-                      ? 'bg-rose-50 text-gray-900 font-semibold'
-                      : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
+                    isActive ? 'bg-rose-50 text-gray-900 font-semibold' : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
                   }`}
                 >
                   <Icon size={16} className={isActive ? 'text-rose-600' : 'text-gray-400'} />
@@ -143,8 +165,6 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
           </div>
         )}
       </nav>
-
-      {/* Footer */}
       <div className="px-3 py-4 border-t border-gray-100">
         {session ? (
           <button
@@ -168,14 +188,7 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
   )
 }
 
-export function Sidebar({ onMobileMenuOpen }: { onMobileMenuOpen?: (open: (v: boolean) => void) => void }) {
-  const [isOpen, setIsOpen] = useState(false)
-
-  // Expose setIsOpen to parent (TopBar hamburger)
-  useEffect(() => {
-    onMobileMenuOpen?.(setIsOpen)
-  }, [onMobileMenuOpen])
-
+function SidebarControlled({ isOpen, setIsOpen }: { isOpen: boolean; setIsOpen: (v: boolean) => void }) {
   return (
     <>
       {/* Desktop */}

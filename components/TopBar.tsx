@@ -4,6 +4,7 @@ import { useSession, signOut } from 'next-auth/react'
 import { usePathname } from 'next/navigation'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { Menu } from 'lucide-react'
 import {
   TrendingUp, Search, Bookmark, Telescope, Wand2, FileText,
   Star, Settings, HelpCircle, Info, Phone, Shield, ScrollText, ShieldCheck, DollarSign
@@ -33,7 +34,11 @@ const NAV_LINKS = [
   { href: '/about',   label: 'About' },
 ]
 
-export function TopBar() {
+interface TopBarProps {
+  onMobileMenuToggle?: () => void
+}
+
+export function TopBar({ onMobileMenuToggle }: TopBarProps) {
   const { data: session, status } = useSession()
   const pathname = usePathname()
   const [stats, setStats] = useState<{ members: number; online: number } | null>(null)
@@ -49,17 +54,31 @@ export function TopBar() {
     Object.entries(PAGE_META).find(([k]) => k !== '/trending' && k !== '/keywords' && pathname.startsWith(k))?.[1]
 
   return (
-    <div className="flex items-center justify-between bg-white border-b border-gray-200 shrink-0">
-      {/* Logo — fixed width matching sidebar */}
-      <div className="w-64 shrink-0 flex justify-center px-5 py-4 border-r border-gray-200">
+    <div className="flex items-center justify-between bg-white border-b border-gray-200 shrink-0 overflow-hidden">
+
+      {/* Mobile: logo left + hamburger right */}
+      <div className="md:hidden flex items-center justify-between w-full px-4 py-3">
+        <Link href="/keywords" className="text-lg font-black tracking-tight">
+          <span className="text-gray-900">Teachers</span><span className="text-rose-600">Boost</span>
+        </Link>
+        <button
+          onClick={onMobileMenuToggle}
+          className="bg-rose-600 text-white p-2 rounded-[5px]"
+        >
+          <Menu size={22} />
+        </button>
+      </div>
+
+      {/* Desktop: logo fixed-width left */}
+      <div className="hidden md:flex w-64 shrink-0 justify-center px-5 py-4 border-r border-gray-200">
         <Link href="/keywords" className="text-lg font-black tracking-tight">
           <span className="text-gray-900">Teachers</span><span className="text-rose-600">Boost</span>
         </Link>
       </div>
 
-      {/* Stats */}
+      {/* Desktop: stats */}
       {stats && (
-        <div className="flex items-center gap-3 px-6 py-4 text-sm text-gray-500">
+        <div className="hidden md:flex items-center gap-3 px-6 py-4 text-sm text-gray-500">
           <span>👥 <span className="font-semibold text-gray-700">{stats.members}</span> members</span>
           <span className="text-gray-300">·</span>
           <span><span className="inline-block w-2 h-2 rounded-full bg-green-500 mr-1 align-middle" />
@@ -68,8 +87,8 @@ export function TopBar() {
         </div>
       )}
 
-      {/* Page title */}
-      <div className="flex items-center gap-2.5 flex-1 px-8 py-4">
+      {/* Desktop: page title */}
+      <div className="hidden md:flex items-center gap-2.5 flex-1 px-8 py-4">
         {meta && (
           <>
             <meta.Icon size={17} className="text-rose-500 shrink-0" />
@@ -78,8 +97,8 @@ export function TopBar() {
         )}
       </div>
 
-      {/* Right: nav links + auth */}
-      <div className="flex items-center gap-5 px-8 py-4">
+      {/* Desktop: nav links + auth */}
+      <div className="hidden md:flex items-center gap-5 px-8 py-4">
         {NAV_LINKS.map(link => (
           <Link
             key={link.href}
@@ -91,7 +110,6 @@ export function TopBar() {
             {link.label}
           </Link>
         ))}
-
 
         {status === 'loading' ? null : session?.user ? (
           <>

@@ -26,7 +26,7 @@ export default function TrendingPage() {
           </div>
           <Link
             href="/keywords"
-            className="shrink-0 flex items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold px-4 py-2 rounded-[5px] transition"
+            className="hidden md:flex shrink-0 items-center gap-1.5 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold px-4 py-2 rounded-[5px] transition"
           >
             Full Research Tool <ArrowRight size={14} />
           </Link>

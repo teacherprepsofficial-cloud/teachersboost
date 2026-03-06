@@ -379,7 +379,7 @@ export const FILTER_GROUPS: FilterGroup[] = [
   },
   {
     key: 'language',
-    label: 'Language',
+    label: 'Languages',
     options: [
       { value: 'en-espanol', label: 'En español' },
       { value: 'en-francais', label: 'En français' },
@@ -388,7 +388,7 @@ export const FILTER_GROUPS: FilterGroup[] = [
   },
   {
     key: 'programs',
-    label: 'Programs & methods',
+    label: 'Programs',
     options: [
       { value: 'programs', label: 'Programs', children: [
         { value: 'ap', label: 'Advanced Placement (AP)' },

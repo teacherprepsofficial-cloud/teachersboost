@@ -5,11 +5,8 @@ import { authOptions } from '@/lib/auth'
 export async function GET() {
   try {
     const session = await getServerSession(authOptions)
-    if (!session?.user?.id) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
-
-    const sellerType = (session.user as any).sellerType || 'teacher-seller'
+    // Allow unauthenticated access — just default to teacher-seller
+    const sellerType = (session?.user as any)?.sellerType || 'teacher-seller'
 
     const queries =
       sellerType === 'seller-to-sellers'

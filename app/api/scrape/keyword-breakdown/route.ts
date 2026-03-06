@@ -6,9 +6,7 @@ import { scrapeKeywordResults, scrapeTopProducts, scrapeKeywordSuggestions, scra
 export async function POST(req: NextRequest) {
   try {
     const session = await getServerSession(authOptions)
-    if (!session?.user?.email) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
-    }
+    // Keyword breakdown is accessible without login (read-only scrape)
 
     const { keyword } = await req.json()
     if (!keyword) {

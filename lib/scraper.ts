@@ -66,33 +66,65 @@ export async function scrapeKeywordSuggestions(keyword: string): Promise<string[
   }
 }
 
+type TptProductType =
+  | 'bulletin-board' | 'worksheet' | 'activities' | 'lesson-plan'
+  | 'task-cards' | 'anchor-chart' | 'centers' | 'game' | 'craft'
+  | 'coloring' | 'clip-art' | 'poster' | 'flash-cards' | 'generic'
+
+function detectProductType(kw: string): TptProductType {
+  if (/bulletin\s*board/.test(kw))   return 'bulletin-board'
+  if (/\bworksheets?\b/.test(kw))    return 'worksheet'
+  if (/\bactivit(y|ies)\b/.test(kw)) return 'activities'
+  if (/\blesson\s*plan/.test(kw))    return 'lesson-plan'
+  if (/\btask\s*cards?\b/.test(kw))  return 'task-cards'
+  if (/\banchor\s*chart/.test(kw))   return 'anchor-chart'
+  if (/\bcenters?\b/.test(kw))       return 'centers'
+  if (/\bgames?\b/.test(kw))         return 'game'
+  if (/\bcrafts?\b/.test(kw))        return 'craft'
+  if (/\bcoloring\b/.test(kw))       return 'coloring'
+  if (/\bclip\s*art\b/.test(kw))     return 'clip-art'
+  if (/\bposters?\b/.test(kw))       return 'poster'
+  if (/\bflash\s*cards?\b/.test(kw)) return 'flash-cards'
+  return 'generic'
+}
+
+const GRADE_LEVELS = [
+  'kindergarten', '1st grade', '2nd grade', '3rd grade',
+  '4th grade', '5th grade', '6th grade', 'middle school', 'high school',
+]
+
+const HAS_GRADE = /\b(preschool|kindergarten|kinder|1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th|elementary|middle school|high school)\b/
+
+const CONTEXTUAL_SUFFIXES: Record<TptProductType, string[]> = {
+  'bulletin-board': ['fall', 'spring', 'winter', 'back to school', 'black and white', 'free', 'classroom decor'],
+  'worksheet':      ['free', 'pdf', 'answer key', 'digital', 'no prep'],
+  'activities':     ['free', 'printable', 'digital', 'hands on', 'interactive'],
+  'lesson-plan':    ['free', 'week long', 'unit plan', 'sub plan'],
+  'task-cards':     ['digital', 'boom cards', 'free', 'printable', 'bundle'],
+  'anchor-chart':   ['printable', 'free', 'poster', 'bundle'],
+  'centers':        ['free', 'printable', 'digital', 'math', 'literacy'],
+  'game':           ['free', 'digital', 'printable', 'board game', 'review game'],
+  'craft':          ['template', 'free', 'printable', 'fall', 'spring', 'winter', 'no prep'],
+  'coloring':       ['free', 'printable', 'seasonal', 'easy', 'bundle'],
+  'clip-art':       ['free', 'commercial use', 'png', 'bundle', 'black and white'],
+  'poster':         ['free', 'bundle', 'printable', 'classroom', 'anchor chart'],
+  'flash-cards':    ['free', 'printable', 'digital', 'boom cards'],
+  'generic':        ['activities', 'worksheets', 'printable', 'free', 'lesson plan', 'bundle'],
+}
+
 export async function scrapeKeywordLongTail(keyword: string): Promise<string[]> {
   const kw = keyword.toLowerCase().trim()
+  const type = detectProductType(kw)
+  const hasGrade = HAS_GRADE.test(kw)
 
-  const hasGrade = /\b(preschool|kindergarten|kinder|\d+st|\d+nd|\d+rd|\d+th|1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th|elementary|middle school|high school)\b/.test(kw)
-  const hasFormat = /\b(activities|activity|worksheets|worksheet|lesson plan|printable|free)\b/.test(kw)
+  // Grade expansions — most valuable for sellers picking their target audience
+  const gradeExpansions = hasGrade ? [] : GRADE_LEVELS.map(g => `${kw} ${g}`)
 
-  const formatVariants = hasFormat ? [] : [
-    `${kw} activities`,
-    `${kw} worksheets`,
-    `${kw} lesson plan`,
-    `${kw} printable`,
-    `${kw} free`,
-  ]
+  // Contextual suffixes — only ones that make sense for this product type
+  const suffixVariants = CONTEXTUAL_SUFFIXES[type].map(s => `${kw} ${s}`)
 
-  const gradeVariants = hasGrade ? [] : [
-    `${kw} kindergarten`,
-    `${kw} 1st grade`,
-    `${kw} 2nd grade`,
-    `${kw} 3rd grade`,
-    `${kw} 4th grade`,
-    `${kw} 5th grade`,
-    `${kw} middle school`,
-    `${kw} high school`,
-    `${kw} special education`,
-  ]
-
-  return [...formatVariants, ...gradeVariants]
+  // Grade expansions first (more actionable), then contextual, deduped, capped at 10
+  return [...new Set([...gradeExpansions, ...suffixVariants])].slice(0, 10)
 }
 
 export interface TopProduct {

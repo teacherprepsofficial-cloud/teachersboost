@@ -127,7 +127,7 @@ export default function KeywordsPage() {
 
   const handleFilterClear = () => setFilterSelected({})
 
-  const handleFilterSearch = (query: string) => {
+  const handleAutoSearch = (query: string) => {
     setSearchInput(query)
     handleSearch(query)
   }
@@ -136,18 +136,51 @@ export default function KeywordsPage() {
     <div className="min-h-screen bg-[#F1F5F9] p-8">
       <div className="max-w-5xl mx-auto">
 
-        <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight">Teachers Pay Teachers Seller Tool</h1>
-        <p className="text-xl font-bold text-rose-600 mb-3">Find profitable keywords &nbsp;|&nbsp; Optimize product listings &nbsp;|&nbsp; Boost TpT sales</p>
-        <p className="text-sm text-slate-500 mb-8">Start by typing any keyword into the search box below. Then, go deeper by using the <span className="font-semibold text-slate-700">Find Keywords with Filters</span> box to discover more niche TpT product ideas.</p>
+        <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight text-center">Teachers Pay Teachers Seller Tool</h1>
+
+        {/* Desktop subtitle */}
+        <p className="hidden md:block text-xl font-bold text-rose-600 mb-3 text-center">Find profitable keywords &nbsp;|&nbsp; Optimize product listings &nbsp;|&nbsp; Boost TpT sales</p>
+
+        {/* Mobile subtitle */}
+        <div className="md:hidden flex flex-col items-center gap-1 mb-3">
+          <p className="text-lg font-bold text-rose-600">🔎 Find keywords</p>
+          <p className="text-lg font-bold text-rose-600">📈 Optimize listings</p>
+          <p className="text-lg font-bold text-rose-600">🚀 Boost TpT sales</p>
+        </div>
+
+        {/* Desktop description */}
+        <p className="hidden md:block text-sm text-slate-500 mb-8 text-center">Start by typing any keyword into the search box below. Then, go deeper by using the <span className="font-semibold text-slate-700">Find Keywords with Filters</span> box to discover more niche TpT product ideas.</p>
+
+        {/* Mobile description */}
+        <p className="md:hidden text-sm text-slate-500 mb-8 text-center">Type any keyword into the search box below to discover profitable TpT product ideas!</p>
 
         {/* Search Bar */}
         <form onSubmit={handleSubmit} className="mb-8">
-          <div className="flex gap-0">
+          {/* Mobile: stacked layout */}
+          <div className="flex flex-col gap-2 md:hidden">
             <input
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Type your product idea here — e.g. '3rd grade math spiral review'"
+              placeholder="3rd grade math review spiral with answers"
+              className="w-full px-5 py-4 border-2 border-gray-300 rounded-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-[5px] font-bold transition disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
+              {isLoading ? 'Analyzing...' : 'Search Keywords'}
+            </button>
+          </div>
+          {/* Desktop: side-by-side layout */}
+          <div className="hidden md:flex gap-0">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="3rd grade math review spiral with answers"
               className="flex-1 px-5 py-4 border-2 border-gray-300 border-r-0 rounded-l-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
             />
             <button
@@ -156,18 +189,20 @@ export default function KeywordsPage() {
               className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-r-[5px] font-bold transition disabled:opacity-50 flex items-center gap-2"
             >
               {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
-              {isLoading ? 'Analyzing...' : 'Search'}
+              {isLoading ? 'Analyzing...' : 'Search Keywords'}
             </button>
           </div>
         </form>
 
-        <FilterPanel
-          selected={filterSelected}
-          onChange={handleFilterChange}
-          onSearch={handleFilterSearch}
-          onClear={handleFilterClear}
-          baseKeyword={searchInput}
-        />
+        <div className="hidden md:block">
+          <FilterPanel
+            selected={filterSelected}
+            onChange={handleFilterChange}
+            onAutoSearch={handleAutoSearch}
+            onClear={handleFilterClear}
+            baseKeyword={searchInput}
+          />
+        </div>
 
         {error && (
           <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-[5px] mb-6 text-sm font-medium">

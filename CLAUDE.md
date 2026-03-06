@@ -23,11 +23,12 @@ TeachersBoost is a TpT (Teachers Pay Teachers) seller SaaS tool. It helps TpT se
 ## Design System
 
 - **Border radius**: `rounded-[5px]` EVERYWHERE — no exceptions, no `rounded-lg`, no `rounded-xl`
-- **Primary**: Purple `#7C3AED` / `bg-purple-600`
+- **Primary accent**: Rose/red — `bg-rose-600`, `text-rose-600`
 - **Background**: `#F1F5F9` (dashboard pages)
-- **Sidebar bg**: `#0f172a` (dark navy)
+- **Sidebar bg**: white with `border-r border-gray-200` (light sidebar)
 - **Font style**: Bold, analytical, authoritative — like Ahrefs. NOT rounded/bubbly/vibe-coded.
 - **Tone**: Strong, data-driven, built for non-technical teachers who sell on TpT
+- **Dark mode**: DISABLED — app forces light mode in `globals.css` via `prefers-color-scheme: dark` override
 
 ---
 
@@ -53,26 +54,33 @@ app/
     keywords/page.tsx              # Keyword research page
     keywords/[keyword]/page.tsx    # Keyword breakdown (meter, competition links, matching keywords)
     saved-keywords/page.tsx        # Saved/bookmarked keywords list
-    shop-optimizer/page.tsx        # Placeholder (not built)
+    trending/page.tsx              # Trending keywords page (Algolia live feed)
+    niche-finder/page.tsx          # Niche Finder tool
     title-generator/page.tsx       # Placeholder (not built)
     description-generator/page.tsx # Placeholder (not built)
-    pricing-calculator/page.tsx    # Placeholder (not built)
     settings/page.tsx
+    layout.tsx                     # Uses DashboardShell (wraps Sidebar + TopBar + MobileBottomNav)
   onboarding/page.tsx              # 3-step onboarding (goal, grade levels, store stage)
   api/
-    scrape/keywords/route.ts       # Main keyword search API
-    scrape/keyword-breakdown/route.ts  # Full breakdown (meter data + competition links)
-    keywords/save/route.ts         # GET list | POST save | DELETE unsave
-    keywords/save-full/route.ts    # GET full saved keyword objects (with scores)
-    onboarding/route.ts            # Save onboarding answers
+    scrape/keywords/route.ts           # Main keyword search API (rate-limited)
+    scrape/keyword-breakdown/route.ts  # Full breakdown — NO auth required (public read-only)
+    keywords/save/route.ts             # GET list | POST save | DELETE unsave
+    keywords/save-full/route.ts        # GET full saved keyword objects (with scores)
+    dashboard/opportunities/route.ts   # GET trending keywords — NO auth required
+    onboarding/route.ts                # Save onboarding answers
 
 components/
-  Sidebar.tsx                      # Dark sidebar, menu items
+  DashboardShell.tsx               # Client shell: TopBar + Sidebar + MobileBottomNav + layout
+  TopBar.tsx                       # Top bar — desktop full, mobile: logo left + hamburger right
+  Sidebar.tsx                      # Light sidebar (desktop drawer + mobile drawer with nav links)
+  MobileBottomNav.tsx              # Mobile-only fixed bottom nav (5 tool icons)
   KeywordTable.tsx                 # Sortable keyword results table
-  FeedbackWidget.tsx               # Floating feedback button
+  FilterPanel.tsx                  # TpT-style pill dropdowns for keyword filters (desktop only)
+  FeedbackWidget.tsx               # Floating feedback button (desktop only)
 
 lib/
   scraper.ts                       # All TpT scraping functions
+  tpt-filters.ts                   # Filter groups/options for FilterPanel
   auth.ts                          # NextAuth config
   db.ts                            # MongoDB connection
 
@@ -80,7 +88,48 @@ models/
   User.ts                          # User model (plan, onboarding fields)
   SavedKeyword.ts                  # Saved keywords (userId + keyword + scores)
   KeywordSearch.ts                 # Cache layer for keyword scrape results
+
+app/globals.css                    # Forces light mode, global input text color #111827
 ```
+
+---
+
+## Mobile Layout Architecture
+
+The app uses a **mobile-first responsive design** introduced in March 2026:
+
+### DashboardShell (`components/DashboardShell.tsx`)
+- Client component that wires TopBar + Sidebar + MobileBottomNav together
+- Manages mobile drawer open/close state
+- Main content gets `pb-16 md:pb-0` to clear the bottom nav bar
+- Dashboard layout (`app/(dashboard)/layout.tsx`) renders only `<DashboardShell>`
+
+### TopBar (`components/TopBar.tsx`)
+- **Mobile**: logo left + red hamburger button right, all other content hidden
+- **Desktop**: logo (w-64) + stats + page title + nav links + auth
+- Accepts `onMobileMenuToggle` prop to open the sidebar drawer
+
+### MobileBottomNav (`components/MobileBottomNav.tsx`)
+- Fixed bottom bar, `md:hidden`
+- 5 icons: Keywords (`/keywords`), Trending (`/trending`), Niche (`/niche-finder`), Titles (`/title-generator`), Description (`/description-generator`)
+
+### Sidebar (`components/Sidebar.tsx`)
+- Desktop: `hidden md:flex` fixed left drawer
+- Mobile: slides in from left, triggered by TopBar hamburger
+- Mobile drawer includes extra section: Pricing, Contact, About, My Account links
+
+### Mobile-only UI rules (applied throughout)
+- `FilterPanel` hidden on mobile (`hidden md:block` wrapper in keywords/page.tsx)
+- `FeedbackWidget` hidden on mobile (`hidden md:block` on the button)
+- Trending page: "Full Research Tool" button hidden on mobile
+- Niche Finder: suggestion chips hidden on mobile, input text forced dark
+- Keyword Explorer search bar: stacked layout on mobile (input above, button below), button reads "Search Keywords"
+- Keyword Explorer placeholder: `"3rd grade math review spiral with answers"` on both mobile and desktop
+- Keywords page subtitle: stacked emoji lines on mobile (`🔎 Find keywords / 📈 Optimize listings / 🚀 Boost TpT sales`)
+- Keyword breakdown page: Save Keyword button stacked below keyword title on mobile; "View on TpT" stacked below text on mobile; Competition Score + Results columns hidden in Matching Keywords table on mobile
+- KeywordTable (search results): Competition Score column hidden on mobile
+- Saved Keywords empty state: shortened to "Save keywords here" on mobile
+- `globals.css`: dark mode overridden to keep light theme; `input/textarea/select` forced to `color: #111827` globally
 
 ---
 
@@ -99,6 +148,12 @@ models/
 - **Competition score**: `resultCount / 1000` (9,505 results → 9.5)
 - **isRocket**: `resultCount < 1000` (hidden gem)
 
+### Smart Long-Tail Generation (`scrapeKeywordLongTail`)
+- Detects product type from keyword (13 types: bulletin-board, worksheet, activities, lesson-plan, task-cards, anchor-chart, centers, game, craft, coloring, clip-art, poster, flash-cards, generic)
+- Appends contextual suffixes per type (e.g. bulletin boards get seasonal/decor suffixes, NOT "worksheets")
+- Also expands grade levels if no grade detected
+- Returns up to 10 long-tail variants, grade expansions first
+
 ### Algolia API (TpT autocomplete)
 - **Endpoint**: `https://sbekgjsj8m-3.algolianet.com/1/indexes/*/queries`
 - **App ID**: `SBEKGJSJ8M`
@@ -108,10 +163,6 @@ models/
 
 ### Sort Orders for Product Links
 TpT URL params: `order=Relevance`, `order=Rating`, `order=Price-Asc`, `order=Price-Desc`, `order=Most-Recent`
-
-### `scrapeFirstProduct(keyword, order)`
-Fetches the #1 product from a given sort order. Returns `{ title, url }` or `null`.
-Used in keyword breakdown to show actual product links.
 
 ### Price Sanity Filter
 Products must be `$0.50 ≤ price ≤ $25` — filters metadata noise from TpT HTML.
@@ -141,14 +192,17 @@ Layout (grid):
 - `< 10`: 🟠 Crowded (orange)
 - `≥ 10`: 🔴 Competitive (red)
 
+### Auth on Breakdown API
+- `/api/scrape/keyword-breakdown` does NOT require login — public read-only scrape
+- `/api/dashboard/opportunities` does NOT require login — defaults to teacher-seller keywords
+
 ---
 
-## Trending Keywords Section
+## Trending Keywords Page (`/trending`)
 
-On keyword results page, shown after search. Redesigned as:
-- **Green gradient header bar** ("Trending on TpT Right Now")
-- **Grid of cards** — each shows keyword, competition score, opportunity grade badge
-- Data source: Algolia API, each trending keyword is also scraped for competition score
+- Fetches from `/api/dashboard/opportunities` (Algolia, no auth required)
+- Lists keywords as clickable rows → each links to `/keywords/[keyword]`
+- "Full Research Tool" button hidden on mobile
 
 ---
 
@@ -158,7 +212,7 @@ On keyword results page, shown after search. Redesigned as:
 - API enforces plan limits — **no frontend plan gate** (was a bug causing admin to get blocked)
 - `SavedKeyword` model: `{ userId, keyword, competitionScore, resultCount, timestamps }`
 - Unique index on `{ userId, keyword }`
-- `/saved-keywords` page shows table with trash icon to remove
+- `/saved-keywords` page shows legal-pad notebook UI with trash icon per row
 
 ---
 
@@ -185,7 +239,7 @@ On keyword results page, shown after search. Redesigned as:
 ## Deploy
 
 ```bash
-vercel --prod
+cd /Users/elliottzelinskas/teachersboost && vercel --prod
 ```
 
 Always deploys to https://teachersboost.vercel.app (aliased).

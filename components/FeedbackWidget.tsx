@@ -47,7 +47,7 @@ export function FeedbackWidget() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-rose-600 text-white p-4 rounded-full shadow-lg hover:bg-rose-700 transition z-40"
+        className="hidden md:block fixed bottom-6 right-6 bg-rose-600 text-white p-4 rounded-full shadow-lg hover:bg-rose-700 transition z-40"
       >
         <MessageCircle size={24} />
       </button>

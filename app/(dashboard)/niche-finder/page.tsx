@@ -99,9 +99,9 @@ export default function NicheFinderPage() {
               onChange={e => setRole(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && find()}
               placeholder="e.g. 3rd grade math teacher, special education resource room, high school biology..."
-              className="w-full border border-gray-200 rounded-[5px] px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-rose-500"
+              className="w-full border border-gray-200 rounded-[5px] px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-rose-500"
             />
-            <div className="flex flex-wrap gap-2 mt-2">
+            <div className="hidden md:flex flex-wrap gap-2 mt-2">
               {EXAMPLE_ROLES.map(r => (
                 <button
                   key={r}

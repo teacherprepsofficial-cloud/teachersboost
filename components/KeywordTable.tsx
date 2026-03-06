@@ -104,7 +104,7 @@ export function KeywordTable({ data }: KeywordTableProps) {
                   <InfoTooltip text="A 0–100 score showing how hard it would be to rank for this keyword on TpT — the lower the score, the easier it is to get your product seen." />
                 </div>
               </th>
-              <th className="px-4 py-3 text-left">
+              <th className="hidden md:table-cell px-4 py-3 text-left">
                 <div className="flex items-center">
                   <Header label="Competition Score" k="competitionScore" />
                   <InfoTooltip text="The raw number of existing TpT products competing for this keyword, divided by 1,000 — a higher number means more sellers are already targeting it." align="right" />
@@ -131,7 +131,7 @@ export function KeywordTable({ data }: KeywordTableProps) {
                     </Link>
                   </td>
                   <td className={`px-4 py-3 text-sm ${grade.color}`}>{grade.label}</td>
-                  <td className="px-4 py-3 text-sm font-semibold text-gray-700">{row.competitionScore.toFixed(2)}</td>
+                  <td className="hidden md:table-cell px-4 py-3 text-sm font-semibold text-gray-700">{row.competitionScore.toFixed(2)}</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => toggleSave(row)}

@@ -105,13 +105,16 @@ export default function SavedKeywordsPage() {
             ) : keywords.length === 0 ? (
               <div className="pl-20 pr-6">
                 {/* Empty ruled lines */}
-                {Array.from({ length: 10 }).map((_, i) => (
+                {Array.from({ length: 15 }).map((_, i) => (
                   <div key={i} className="border-b py-3.5" style={{ borderColor: '#93c5fd' }} />
                 ))}
                 <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none" style={{ top: '80px' }}>
                   <BookmarkCheck size={36} className="mb-3" style={{ color: '#d1d5db' }} />
                   <p className="font-semibold text-gray-400 mb-1">Nothing saved yet</p>
-                  <p className="text-sm text-gray-400 mb-4">Bookmark keywords from the explorer to save them here.</p>
+                  <p className="text-sm text-gray-400 mb-4 text-center px-4">
+                    <span className="md:hidden">Save keywords here</span>
+                    <span className="hidden md:inline">Bookmark keywords from the explorer to save them here.</span>
+                  </p>
                   <Link
                     href="/keywords"
                     className="pointer-events-auto bg-rose-600 hover:bg-rose-700 text-white text-sm font-bold px-5 py-2 rounded-[5px] transition"
@@ -169,7 +172,7 @@ export default function SavedKeywordsPage() {
                 })}
 
                 {/* Extra blank lines at bottom — always at least 10 total lines */}
-                {Array.from({ length: Math.max(0, 10 - keywords.length) }).map((_, i) => (
+                {Array.from({ length: Math.max(0, 15 - keywords.length) }).map((_, i) => (
                   <div key={i} className="border-b py-3.5" style={{ borderColor: '#93c5fd' }} />
                 ))}
               </div>
