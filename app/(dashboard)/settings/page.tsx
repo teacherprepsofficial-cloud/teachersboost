@@ -460,29 +460,9 @@ function SettingsInner() {
               </div>
             )}
 
-            {/* Plan cards — current plan highlighted, no action buttons */}
-            <div className="space-y-3 mb-5">
-              {[
-                { key: 'free',    label: 'Free Plan',  price: null,          desc: '3 keyword searches/week · No AI tools · No saves' },
-                { key: 'starter', label: 'Boost Plan', price: '$9.99/month',  desc: 'Unlimited searches · 20 AI uses/month · 50 saves' },
-                { key: 'pro',     label: 'Pro Plan',   price: '$14.99/month', desc: 'Unlimited searches · 75 AI uses/month · 100 saves' },
-              ].map(({ key, label, price, desc }) => {
-                const isCurrent = plan === key && !cancelAtPeriodEnd
-                return (
-                  <div key={key} className={`rounded-[5px] border p-4 flex items-center justify-between gap-4 ${isCurrent ? 'border-rose-300 bg-rose-50' : 'border-gray-200 bg-white'}`}>
-                    <div>
-                      <p className="text-sm font-bold text-gray-900">
-                        {label}{price && <span className="text-gray-400 font-normal"> — {price}</span>}
-                      </p>
-                      <p className="text-xs text-gray-500 mt-0.5">{desc}</p>
-                    </div>
-                    {isCurrent && (
-                      <span className="text-xs font-bold text-rose-600 bg-rose-100 px-3 py-1.5 rounded-[5px] shrink-0">Current Plan</span>
-                    )}
-                  </div>
-                )
-              })}
-            </div>
+            <p className="text-sm text-gray-600 mb-5">
+              Currently on the <span className="font-semibold text-gray-900">{planLabel(plan)}</span>. Want to switch plans? View all options and select what works best for you.
+            </p>
 
             <a
               href="/pricing"
