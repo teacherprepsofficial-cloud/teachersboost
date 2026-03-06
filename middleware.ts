@@ -6,7 +6,7 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname
-        const protectedPrefixes = ['/admin', '/onboarding', '/saved-keywords']
+        const protectedPrefixes = ['/admin', '/onboarding']
         if (protectedPrefixes.some(p => path.startsWith(p))) return !!token
         return true
       },
@@ -16,6 +16,6 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/admin/:path*', '/onboarding', '/saved-keywords/:path*',
+    '/admin/:path*', '/onboarding',
   ],
 }
