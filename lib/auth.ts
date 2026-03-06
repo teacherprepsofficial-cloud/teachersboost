@@ -58,11 +58,6 @@ export const authOptions: NextAuthOptions = {
         token.timezone = (user as any).timezone || 'America/New_York'
         token.sellerType = (user as any).sellerType || null
       }
-      // Update lastSeen on every JWT refresh for online tracking
-      if (token.id) {
-        await connectDB()
-        await User.updateOne({ _id: token.id }, { lastSeen: new Date() })
-      }
       if (trigger === 'update' && session) {
         if (session.timezone) token.timezone = session.timezone
         if (session.sellerType !== undefined) token.sellerType = session.sellerType
@@ -79,6 +74,13 @@ export const authOptions: NextAuthOptions = {
         session.user.onboardingCompleted = token.onboardingCompleted as boolean
         session.user.timezone = (token.timezone as string) || 'America/New_York'
         session.user.sellerType = (token.sellerType as string) || undefined
+      }
+      // Update lastSeen here (Node.js runtime, not Edge)
+      if (token.id) {
+        try {
+          await connectDB()
+          await User.updateOne({ _id: token.id }, { lastSeen: new Date() })
+        } catch {}
       }
       return session
     },
