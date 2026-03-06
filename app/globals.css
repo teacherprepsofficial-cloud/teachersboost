@@ -30,3 +30,22 @@ input, textarea, select {
   color: #111827;
   background-color: #ffffff;
 }
+
+/* All clickable elements: pointer cursor + grow on hover */
+button, a, [role="button"], select {
+  cursor: pointer;
+}
+
+button, a {
+  transition: transform 0.15s ease;
+}
+
+button:hover, a:hover {
+  transform: scale(1.03);
+}
+
+/* Don't scale nav/sidebar links — too jumpy in tight layouts */
+nav button:hover, nav a:hover,
+.no-scale:hover {
+  transform: none;
+}
