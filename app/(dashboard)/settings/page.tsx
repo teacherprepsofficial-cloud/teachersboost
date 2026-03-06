@@ -295,34 +295,57 @@ function SettingsInner() {
 
         {/* ── Subscription ── */}
         <section className="bg-white rounded-[5px] border border-gray-200 p-6 mb-5">
-          <h2 className="text-lg font-bold text-gray-900 mb-5">Subscription</h2>
-
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex items-start justify-between gap-4 mb-5">
             <div>
-              <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-[5px] border font-semibold text-sm ${planBadgeColor(plan)}`}>
+              <h2 className="text-lg font-bold text-gray-900 mb-2">Subscription</h2>
+              <div className={`inline-flex items-center px-3 py-1 rounded-[5px] border font-semibold text-sm ${planBadgeColor(plan)}`}>
                 {planLabel(plan)}
               </div>
               {renewalDate && isPaidPlan && !cancelAtPeriodEnd && (
-                <p className="text-xs text-gray-500 mt-1.5">Renews {renewalDate}</p>
+                <p className="text-xs text-gray-400 mt-1.5">Renews {renewalDate}</p>
               )}
               {cancelAtPeriodEnd && renewalDate && (
                 <p className="text-xs text-amber-600 font-semibold mt-1.5 flex items-center gap-1">
-                  <AlertTriangle size={12} />
-                  Cancels {renewalDate} — access remains until then
+                  <AlertTriangle size={11} />
+                  Cancels {renewalDate} — you keep access until then
                 </p>
               )}
             </div>
-            {isPaidPlan && (
-              <button
-                onClick={handleOpenPortal}
-                disabled={openingPortal}
-                className="flex items-center gap-2 text-sm font-semibold text-gray-600 hover:text-gray-900 border border-gray-200 px-4 py-2 rounded-[5px] hover:bg-[#F1F5F9] transition disabled:opacity-60"
-              >
-                <CreditCard size={14} />
-                {openingPortal ? 'Opening...' : 'Manage Billing'}
-              </button>
+
+            {plan !== 'admin' && (
+              <div className="shrink-0 text-right">
+                {isPaidPlan ? (
+                  <button
+                    onClick={handleOpenPortal}
+                    disabled={openingPortal}
+                    className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold px-4 py-2.5 rounded-[5px] transition disabled:opacity-60"
+                  >
+                    <CreditCard size={14} />
+                    {openingPortal ? 'Opening...' : 'Manage Subscription'}
+                  </button>
+                ) : (
+                  <a
+                    href="/pricing"
+                    className="flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-semibold px-4 py-2.5 rounded-[5px] transition"
+                  >
+                    <CreditCard size={14} />
+                    View Plans
+                  </a>
+                )}
+                {isPaidPlan && (
+                  <p className="text-xs text-gray-400 mt-2 max-w-[180px]">
+                    Upgrade, downgrade, or cancel — all in one place.
+                  </p>
+                )}
+              </div>
             )}
           </div>
+
+          {plan === 'free' && (
+            <div className="bg-rose-50 border border-rose-100 rounded-[5px] px-4 py-3 mb-5 text-sm text-rose-700">
+              You're on the free plan — upgrade anytime to unlock unlimited research, AI tools, and more.
+            </div>
+          )}
 
           {/* Usage bars */}
           {!usage ? (
@@ -335,13 +358,13 @@ function SettingsInner() {
               ))}
             </div>
           ) : (
-            <div className="space-y-5 mt-2">
+            <div className="space-y-5">
               {[
-                { key: 'keywordSearches', label: 'Keyword Searches', period: 'week',  proLimit: null,  starterLimit: null, freeLimit: 3 },
-                { key: 'nicheFinder',     label: 'Niche Finder',     period: 'month', proLimit: null,  starterLimit: null, freeLimit: 3 },
-                { key: 'titleGenerator',  label: 'Title Generator',  period: 'month', proLimit: 75,    starterLimit: 20,   freeLimit: 0 },
-                { key: 'descWriter',      label: 'Description Writer', period: 'month', proLimit: 75,  starterLimit: 20,   freeLimit: 0 },
-              ].map(({ key, label, period, proLimit, freeLimit }) => {
+                { key: 'keywordSearches', label: 'Keyword Searches',  period: 'week',  proLimit: null, freeLimit: 3 },
+                { key: 'nicheFinder',     label: 'Niche Finder',      period: 'month', proLimit: null, freeLimit: 5 },
+                { key: 'titleGenerator',  label: 'Title Generator',   period: 'month', proLimit: 75,   freeLimit: 0 },
+                { key: 'descWriter',      label: 'Description Writer', period: 'month', proLimit: 75,  freeLimit: 0 },
+              ].map(({ key, label, period, proLimit }) => {
                 const stat = usage[key]
                 if (!stat) return null
                 const used: number = stat.used
@@ -355,11 +378,11 @@ function SettingsInner() {
                   <div key={key}>
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="text-sm font-semibold text-gray-700">{label}</span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs">
                         {isUnlimited
                           ? <span className="text-green-600 font-semibold">Unlimited</span>
                           : limit === 0
-                          ? <span className="text-gray-400">Not on your plan</span>
+                          ? <span className="text-gray-400">Not included in your plan</span>
                           : <span className="font-semibold text-gray-700">{used} / {limit} <span className="font-normal text-gray-400">this {period}</span></span>
                         }
                       </span>
@@ -380,7 +403,7 @@ function SettingsInner() {
                     </div>
                     {limit === 0 && (
                       <p className="text-xs text-gray-400 mt-1">
-                        Available on Starter & Pro · <a href="/pricing" className="text-rose-600 font-semibold hover:underline">Upgrade →</a>
+                        Available on Boost & Pro · <a href="/pricing" className="text-rose-600 font-semibold hover:underline">See plans →</a>
                       </p>
                     )}
                     {!isUnlimited && limit > 0 && (
@@ -444,34 +467,6 @@ function SettingsInner() {
             </div>
           )}
         </section>
-
-        {/* ── Change My Subscription ── */}
-        {plan !== 'admin' && (
-          <section className="bg-white rounded-[5px] border border-gray-200 p-6 mb-5">
-            <h2 className="text-lg font-bold text-gray-900 mb-1">Change My Subscription</h2>
-            <p className="text-sm text-gray-500 mb-5">Your current plan is highlighted below.</p>
-
-            {cancelAtPeriodEnd && renewalDate && (
-              <div className="mb-5 flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-[5px] px-4 py-3">
-                <AlertTriangle size={14} className="text-amber-600 mt-0.5 shrink-0" />
-                <p className="text-sm text-amber-700 font-medium">
-                  Your subscription is set to cancel on {renewalDate}. You'll keep full access until then.
-                </p>
-              </div>
-            )}
-
-            <p className="text-sm text-gray-600 mb-5">
-              Currently on the <span className="font-semibold text-gray-900">{planLabel(plan)}</span>. Want to switch plans? View all options and select what works best for you.
-            </p>
-
-            <a
-              href="/pricing"
-              className="inline-block bg-rose-600 text-white text-sm font-semibold px-5 py-2.5 rounded-[5px] hover:bg-rose-700 transition"
-            >
-              Update My Plan
-            </a>
-          </section>
-        )}
 
         {/* ── Danger Zone ── */}
         <section className="bg-white rounded-[5px] border border-red-200 p-6">
