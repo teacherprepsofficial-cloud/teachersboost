@@ -41,9 +41,13 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'No keywords found' }, { status: 500 })
     }
 
-    // 4. Get all opted-in users
+    // 4. Get recipients — ?test=email sends only to that address
     await connectDB()
-    const users = await User.find({ emailOptIn: true }).select('name email').lean()
+    const url = new URL(req.url)
+    const testEmail = url.searchParams.get('test')
+    const users: { email: string; name: string }[] = testEmail
+      ? [{ email: testEmail, name: 'Teacher' }]
+      : await User.find({ emailOptIn: { $ne: false } }).select('name email').lean()
 
     // 5. Send email to each user
     let sent = 0
