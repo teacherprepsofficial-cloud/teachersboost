@@ -126,7 +126,7 @@ export default function PricingPage() {
         </div>
 
         {/* Plans grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-stretch">
           {plans.map((plan) => {
             const price = billing === 'annual' ? plan.yearlyPrice : plan.monthlyPrice
             const period = billing === 'annual' ? plan.yearlyPeriod : plan.monthlyPeriod
