@@ -30,6 +30,8 @@ interface IUser extends mongoose.Document {
   subscriptionRenewalDate?: Date
   cancelledAt?: Date
   cancelAtPeriodEnd?: boolean
+  resetPasswordToken?: string
+  resetPasswordTokenExpiry?: Date
   lastSeen?: Date
   createdAt: Date
   updatedAt: Date
@@ -62,6 +64,8 @@ const UserSchema = new mongoose.Schema<IUser>(
     subscriptionRenewalDate: Date,
     cancelledAt: Date,
     cancelAtPeriodEnd: { type: Boolean, default: false },
+    resetPasswordToken: String,
+    resetPasswordTokenExpiry: Date,
     lastSeen: { type: Date, default: Date.now },
   },
   { timestamps: true }
