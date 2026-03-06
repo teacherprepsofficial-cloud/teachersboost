@@ -47,7 +47,7 @@ const plans = [
       { label: 'Related Keyword Variations', highlight: false },
       { label: 'Niche Finder — 5 searches/month (top 5 results)', highlight: false },
       { label: 'Unlimited Keyword Research', highlight: false },
-      { label: 'Niche Finder — unlimited searches (top 25 results)', highlight: false },
+      { label: 'Niche Finder — unlimited searches (top 10 results)', highlight: false },
       { label: 'Save up to 50 Keywords', highlight: false },
       { label: 'Title Generator — 20/month', highlight: false },
       { label: 'Description Writer — 20/month', highlight: false },
