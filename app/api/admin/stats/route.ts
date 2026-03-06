@@ -20,10 +20,10 @@ export async function GET() {
 
   const [dailyCount, mtdCount, lifetimeCount, recentSignups, recentCancellations] =
     await Promise.all([
-      User.countDocuments({ createdAt: { $gte: todayStart } }),
-      User.countDocuments({ createdAt: { $gte: monthStart } }),
-      User.countDocuments(),
-      User.find()
+      User.countDocuments({ newsletterOnly: { $ne: true }, createdAt: { $gte: todayStart } }),
+      User.countDocuments({ newsletterOnly: { $ne: true }, createdAt: { $gte: monthStart } }),
+      User.countDocuments({ newsletterOnly: { $ne: true } }),
+      User.find({ newsletterOnly: { $ne: true } })
         .sort({ createdAt: -1 })
         .limit(25)
         .select('name email plan createdAt')
