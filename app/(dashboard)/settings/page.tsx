@@ -88,9 +88,17 @@ function SettingsInner() {
   useEffect(() => {
     fetch('/api/user/usage')
       .then(r => r.ok ? r.json() : null)
-      .then(d => d && setUsage(d))
+      .then(d => {
+        if (d) {
+          setUsage(d)
+          // If coming back from Stripe and session plan doesn't match DB, refresh JWT
+          if (justUpgraded && d.plan && d.plan !== session?.user?.plan) {
+            update({ plan: d.plan })
+          }
+        }
+      })
       .catch(() => {})
-  }, [])
+  }, [justUpgraded])
 
   useEffect(() => {
     if (session?.user) {
