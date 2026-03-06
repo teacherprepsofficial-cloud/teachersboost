@@ -96,8 +96,9 @@ export async function sendWeeklyOpportunitiesEmail(
         <p style="color: #CBD5E1; font-size: 12px; text-align: center; margin: 0;">
           TeachersBoost TpT Seller Tools &nbsp;·&nbsp;
           <a href="${siteUrl}" style="color: #CBD5E1; text-decoration: none;">teachersboost.vercel.app</a>
-          &nbsp;·&nbsp;
-          You're receiving this because you opted in at signup.
+          <br/><br/>
+          You're receiving this because you opted in at signup.&nbsp;
+          <a href="${siteUrl}/api/unsubscribe?email=${encodeURIComponent(email)}" style="color: #CBD5E1; text-decoration: underline;">Unsubscribe</a>
         </p>
       </div>
     `,
