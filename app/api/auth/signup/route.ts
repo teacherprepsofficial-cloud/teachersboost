@@ -6,7 +6,7 @@ import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
   try {
-    const { name, email, password } = await req.json()
+    const { name, email, password, emailOptIn } = await req.json()
 
     if (!name || !email || !password) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
@@ -34,6 +34,7 @@ export async function POST(req: NextRequest) {
       emailVerified: false,
       verificationToken,
       verificationTokenExpiry,
+      emailOptIn: emailOptIn !== false,
     })
 
     await user.save()

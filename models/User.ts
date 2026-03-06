@@ -33,6 +33,7 @@ interface IUser extends mongoose.Document {
   resetPasswordToken?: string
   resetPasswordTokenExpiry?: Date
   lastSeen?: Date
+  emailOptIn: boolean
   createdAt: Date
   updatedAt: Date
   comparePassword(password: string): Promise<boolean>
@@ -67,6 +68,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     resetPasswordToken: String,
     resetPasswordTokenExpiry: Date,
     lastSeen: { type: Date, default: Date.now },
+    emailOptIn: { type: Boolean, default: true },
   },
   { timestamps: true }
 )
