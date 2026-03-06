@@ -140,25 +140,6 @@ export function FilterPanel({ selected, onChange, onAutoSearch, onClear, baseKey
   const totalSelected = useMemo(() => countSelected(selected), [selected])
   const activeGroups = FILTER_GROUPS.filter(g => !EXCLUDED_KEYS.includes(g.key))
 
-  const selectedChips = useMemo(() => {
-    const chips: { group: string; value: string; label: string }[] = []
-    for (const group of activeGroups) {
-      const groupSelected = selected[group.key] || []
-      if (!groupSelected.length) continue
-      function findLabel(opts: FilterOption[], val: string): string | null {
-        for (const o of opts) {
-          if (o.value === val) return o.label
-          if (o.children) { const f = findLabel(o.children, val); if (f) return f }
-        }
-        return null
-      }
-      for (const val of groupSelected) {
-        chips.push({ group: group.key, value: val, label: findLabel(group.options, val) || val })
-      }
-    }
-    return chips
-  }, [selected])
-
   return (
     <div className="mb-6">
       <div className="flex flex-wrap items-center justify-center gap-2">
@@ -189,29 +170,6 @@ export function FilterPanel({ selected, onChange, onAutoSearch, onClear, baseKey
         )}
       </div>
 
-      {selectedChips.length > 0 && (
-        <div className="mt-3 flex flex-wrap justify-center gap-1.5">
-          {selectedChips.map(chip => (
-            <span
-              key={`${chip.group}-${chip.value}`}
-              className="inline-flex items-center gap-1 bg-rose-100 text-rose-700 text-xs font-semibold px-2.5 py-1 rounded-full"
-            >
-              {chip.label}
-              <button
-                onClick={() => {
-                  onChange(chip.group, chip.value, false)
-                  const newSelected = { ...selected, [chip.group]: (selected[chip.group] || []).filter(v => v !== chip.value) }
-                  const query = buildQueryFromFilters(newSelected, baseKeyword)
-                  if (query.trim()) onAutoSearch(query)
-                }}
-                className="hover:text-rose-900 transition"
-              >
-                <X size={11} />
-              </button>
-            </span>
-          ))}
-        </div>
-      )}
     </div>
   )
 }

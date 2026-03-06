@@ -6,7 +6,7 @@ import { User } from '@/models/User'
 
 const LIMITS = {
   keywordSearches: { free: 3, starter: Infinity, pro: Infinity, admin: Infinity },
-  nicheFinder:     { free: 5, starter: Infinity, pro: Infinity, admin: Infinity },
+  nicheFinder:     { free: 3, starter: Infinity, pro: Infinity, admin: Infinity },
   titleGenerator:  { free: 0, starter: 20,       pro: 75,       admin: Infinity },
   descWriter:      { free: 0, starter: 20,        pro: 75,       admin: Infinity },
 }

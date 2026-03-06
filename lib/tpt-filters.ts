@@ -567,42 +567,51 @@ const FORMAT_TERMS: Record<string, string> = {
   'microsoft-word': 'word document',
 }
 
+// Build a flat value→label map from all filter groups
+function buildLabelMap(): Record<string, string> {
+  const map: Record<string, string> = {}
+  function walk(opts: FilterOption[]) {
+    for (const o of opts) {
+      map[o.value] = o.label
+      if (o.children) walk(o.children)
+    }
+  }
+  for (const g of FILTER_GROUPS) walk(g.options)
+  return map
+}
+const LABEL_MAP = buildLabelMap()
+
+// Parent-only values that shouldn't appear as search terms
+const PARENT_VALUES = new Set([
+  'elementary', 'middle-school', 'high-school',
+  'english-language-arts', 'math', 'science', 'social-studies',
+  'performing-arts', 'art', 'world-languages', 'social-emotional',
+  'seasonal', 'holiday', 'programs', 'supports', 'specialty',
+])
+
 export function buildQueryFromFilters(selected: Record<string, string[]>, baseKeyword?: string): string {
-  if (baseKeyword?.trim()) {
-    // If user typed a keyword, use it as base and enrich with most important filter
-    const grades = selected.grade || []
-    const subjects = selected.subject || []
-    const specificGrades = grades.filter(g => !['elementary', 'middle-school', 'high-school'].includes(g))
-    const gradeForQuery = specificGrades[0] ? GRADE_TERMS[specificGrades[0]] : grades[0] ? GRADE_TERMS[grades[0]] : ''
-    const subjectForQuery = subjects[0] ? SUBJECT_TERMS[subjects[0]] : ''
-    const prefix = gradeForQuery || subjectForQuery || ''
-    return prefix ? `${prefix} ${baseKeyword.trim()}` : baseKeyword.trim()
+  // Collect all selected filter terms in display order (grade, subject, resource, format, theme, audience, language, programs)
+  const ORDER = ['grade', 'subject', 'resourceType', 'format', 'theme', 'audience', 'language', 'programs']
+  const filterTerms: string[] = []
+
+  for (const key of ORDER) {
+    const vals = selected[key] || []
+    for (const val of vals) {
+      if (PARENT_VALUES.has(val)) continue
+      // Use known term maps for grade/subject/resource/format, fall back to label map
+      let term = ''
+      if (key === 'grade') term = GRADE_TERMS[val] || LABEL_MAP[val] || ''
+      else if (key === 'subject') term = SUBJECT_TERMS[val] || LABEL_MAP[val] || ''
+      else if (key === 'resourceType') term = RESOURCE_TERMS[val] || LABEL_MAP[val] || ''
+      else if (key === 'format') term = FORMAT_TERMS[val] || LABEL_MAP[val] || ''
+      else term = LABEL_MAP[val] || val.replace(/-/g, ' ')
+      if (term) filterTerms.push(term)
+    }
   }
 
-  const grades = selected.grade || []
-  const subjects = selected.subject || []
-  const resourceTypes = selected.resourceType || []
-  const formats = selected.format || []
-  const themes = selected.theme || []
-
-  // Prefer specific grades over parent groups
-  const specificGrades = grades.filter(g => !['elementary', 'middle-school', 'high-school'].includes(g))
-  const gradeForQuery = specificGrades[0]
-    ? GRADE_TERMS[specificGrades[0]]
-    : grades[0] ? GRADE_TERMS[grades[0]] : ''
-
-  // Prefer specific subjects over parent groups
-  const specificSubjects = subjects.filter(s => !['english-language-arts', 'math', 'science', 'social-studies', 'performing-arts', 'art', 'world-languages', 'social-emotional'].includes(s))
-  const subjectForQuery = specificSubjects[0]
-    ? SUBJECT_TERMS[specificSubjects[0]]
-    : subjects[0] ? SUBJECT_TERMS[subjects[0]] : ''
-
-  const resourceForQuery = resourceTypes[0] ? RESOURCE_TERMS[resourceTypes[0]] : ''
-  const formatForQuery = formats[0] ? FORMAT_TERMS[formats[0]] : ''
-  const themeForQuery = themes[0] ? themes[0].replace(/-/g, ' ') : ''
-
-  const parts = [gradeForQuery, subjectForQuery, resourceForQuery || formatForQuery || themeForQuery].filter(Boolean)
-  return parts.join(' ')
+  const base = baseKeyword?.trim() || ''
+  const allParts = base ? [base, ...filterTerms] : filterTerms
+  return allParts.join(' ')
 }
 
 export function countSelected(selected: Record<string, string[]>): number {

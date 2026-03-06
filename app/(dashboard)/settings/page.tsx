@@ -365,7 +365,7 @@ function SettingsInner() {
             <div className="space-y-5">
               {[
                 { key: 'keywordSearches', label: 'Keyword Searches',  period: 'week',  proLimit: null, freeLimit: 3 },
-                { key: 'nicheFinder',     label: 'Niche Finder',      period: 'month', proLimit: null, freeLimit: 5 },
+                { key: 'nicheFinder',     label: 'Niche Finder',      period: 'month', proLimit: null, freeLimit: 3 },
                 { key: 'titleGenerator',  label: 'Title Generator',   period: 'month', proLimit: 75,   freeLimit: 0 },
                 { key: 'descWriter',      label: 'Description Writer', period: 'month', proLimit: 75,  freeLimit: 0 },
               ].map(({ key, label, period, proLimit }) => {

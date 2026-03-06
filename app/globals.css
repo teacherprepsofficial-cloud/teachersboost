@@ -44,6 +44,10 @@ button:hover, a:hover {
   transform: scale(1.03);
 }
 
+/* Hide scrollbar but keep scrollable */
+.scrollbar-hide::-webkit-scrollbar { display: none; }
+.scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+
 /* Don't scale nav/sidebar links — too jumpy in tight layouts */
 nav button:hover, nav a:hover,
 .no-scale:hover {

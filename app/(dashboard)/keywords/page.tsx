@@ -34,6 +34,7 @@ function getGrade(score: number) {
 export default function KeywordsPage() {
   const { data: session } = useSession()
   const [searchInput, setSearchInput] = useState('')
+  const [typedKeyword, setTypedKeyword] = useState('')
   const [results, setResults] = useState<KeywordResult[]>([])
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState('')
@@ -45,6 +46,7 @@ export default function KeywordsPage() {
   // Trending — auto-loaded on mount, always visible
   const [trending, setTrending] = useState<TrendingKeyword[] | null>(null)
   const [trendingError, setTrendingError] = useState(false)
+  const [trendingOpen, setTrendingOpen] = useState(true)
 
   useEffect(() => {
     fetch('/api/dashboard/opportunities')
@@ -139,7 +141,7 @@ export default function KeywordsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F1F5F9] p-8">
+    <div className="min-h-screen bg-[#F1F5F9] p-8 pb-40">
       <div className="max-w-5xl mx-auto">
 
         <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight text-center">Teachers Pay Teachers Seller Tool</h1>
@@ -155,75 +157,36 @@ export default function KeywordsPage() {
         </div>
 
         {/* Desktop description */}
-        <p className="hidden md:block text-sm text-slate-500 mb-8 text-center">Start by typing any keyword into the search box below. Then, go deeper by using the <span className="font-semibold text-slate-700">Find Keywords with Filters</span> box to discover more niche TpT product ideas.</p>
+        <p className="hidden md:block text-sm text-slate-500 mb-8 text-center">Start by typing any keyword into the search box below. Then, go deeper by using the filter buttons to discover more niche TpT product ideas.</p>
 
         {/* Mobile description */}
         <p className="md:hidden text-sm text-slate-500 mb-8 text-center">Type any keyword into the search box below to discover profitable TpT product ideas!</p>
 
-        {/* Search Bar */}
-        <form onSubmit={handleSubmit} className="mb-8">
-          {/* Mobile: stacked layout */}
-          <div className="flex flex-col gap-2 md:hidden">
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="3rd grade math review spiral"
-              className="w-full px-5 py-4 border-2 border-gray-300 rounded-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
-            />
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="w-full bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-[5px] font-bold transition disabled:opacity-50 flex items-center justify-center gap-2"
-            >
-              {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
-              {isLoading ? 'Analyzing...' : 'Search Keywords'}
-            </button>
-          </div>
-          {/* Desktop: side-by-side layout */}
-          <div className="hidden md:flex gap-0">
-            <input
-              type="text"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="3rd grade math review spiral with answers"
-              className="flex-1 px-5 py-4 border-2 border-gray-300 border-r-0 rounded-l-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
-            />
-            <button
-              type="submit"
-              disabled={isLoading}
-              className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-r-[5px] font-bold transition disabled:opacity-50 flex items-center gap-2"
-            >
-              {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
-              {isLoading ? 'Analyzing...' : 'Search Keywords'}
-            </button>
-          </div>
-        </form>
-
-        {/* Filters (desktop only) */}
-        <div className="hidden md:block">
-          <FilterPanel
-            selected={filterSelected}
-            onChange={handleFilterChange}
-            onAutoSearch={handleAutoSearch}
-            onClear={handleFilterClear}
-            baseKeyword={searchInput}
-          />
-        </div>
-
         {/* Trending on TpT — always visible, table layout */}
-        <div className="mb-6 rounded-[5px] overflow-hidden border border-green-300 shadow-sm">
+        <div className="mb-8 rounded-[5px] overflow-hidden border border-green-300 shadow-sm">
           {/* Header */}
-          <div className="bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-4 flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => setTrendingOpen(o => !o)}
+            className="no-scale w-full bg-gradient-to-r from-green-600 to-emerald-500 px-6 py-4 flex items-center gap-3"
+          >
             <TrendingUp size={20} className="text-white" />
-            <div>
+            <div className="flex-1 text-left">
               <p className="text-white font-black text-base tracking-tight">TpT Trending Keywords</p>
               <p className="text-green-100 text-xs font-medium mt-0.5">Live from TpT! The keywords that are trending right now</p>
             </div>
-          </div>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18" height="18" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"
+              className={`text-white transition-transform duration-200 ${trendingOpen ? 'rotate-0' : '-rotate-90'}`}
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </button>
 
           {/* Table */}
-          <div className="bg-white">
+          {trendingOpen && <div className="bg-white">
             {trendingError ? (
               <div className="px-6 py-5 text-sm text-gray-400">Could not load trending keywords. Try refreshing.</div>
             ) : trending === null ? (
@@ -271,7 +234,58 @@ export default function KeywordsPage() {
                 </tbody>
               </table>
             )}
+          </div>}
+        </div>
+
+        {/* Search Bar */}
+        <form onSubmit={handleSubmit} className="mb-8">
+          {/* Mobile: stacked layout */}
+          <div className="flex flex-col gap-2 md:hidden">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => { setSearchInput(e.target.value); setTypedKeyword(e.target.value) }}
+              placeholder="3rd grade math review spiral"
+              className="w-full px-5 py-4 border-2 border-gray-300 rounded-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="w-full bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-[5px] font-bold transition disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
+              {isLoading ? 'Analyzing...' : 'Search Keywords'}
+            </button>
           </div>
+          {/* Desktop: side-by-side layout */}
+          <div className="hidden md:flex gap-0">
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => { setSearchInput(e.target.value); setTypedKeyword(e.target.value) }}
+              placeholder="3rd grade math review spiral with answers"
+              className="flex-1 px-5 py-4 border-2 border-gray-300 border-r-0 rounded-l-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
+            />
+            <button
+              type="submit"
+              disabled={isLoading}
+              className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-r-[5px] font-bold transition disabled:opacity-50 flex items-center gap-2"
+            >
+              {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
+              {isLoading ? 'Analyzing...' : 'Search Keywords'}
+            </button>
+          </div>
+        </form>
+
+        {/* Filters (desktop only) */}
+        <div className="hidden md:block">
+          <FilterPanel
+            selected={filterSelected}
+            onChange={handleFilterChange}
+            onAutoSearch={handleAutoSearch}
+            onClear={handleFilterClear}
+            baseKeyword={typedKeyword}
+          />
         </div>
 
         {error && (
@@ -294,6 +308,15 @@ export default function KeywordsPage() {
           <div className="text-center py-12 text-slate-400">
             <Loader className="animate-spin mx-auto mb-3 text-rose-500" size={32} />
             <p className="text-sm font-medium">Analyzing keywords...</p>
+          </div>
+        )}
+
+        {/* Empty state — shown when no search has been run and not loading */}
+        {!isLoading && results.length === 0 && !error && (
+          <div className="flex flex-col items-center justify-center py-20 select-none">
+            <Search size={192} className="text-slate-200 mb-6" strokeWidth={1.5} />
+            <p className="text-xl font-black text-slate-300 tracking-tight mb-1">Search any TpT keyword</p>
+            <p className="text-sm text-slate-300 font-medium">Type above to see competition scores, difficulty, and niche ideas</p>
           </div>
         )}
 
