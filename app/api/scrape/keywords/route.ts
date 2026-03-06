@@ -127,7 +127,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Increment usage
-    if (user.plan !== 'pro' && user.plan !== 'admin') {
+    if (user.plan !== 'pro' && user.plan !== 'starter' && user.plan !== 'admin') {
       user.dailySearchCount += 1
       await user.save()
     }
