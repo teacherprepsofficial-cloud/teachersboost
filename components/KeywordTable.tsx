@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { ChevronUp, ChevronDown, Bookmark, BookmarkCheck } from 'lucide-react'
 import Link from 'next/link'
+import { InfoTooltip } from './InfoTooltip'
 
 interface KeywordResult {
   keyword: string
@@ -66,17 +67,18 @@ export function KeywordTable({ data }: KeywordTableProps) {
 
   const Header = ({ label, k }: { label: string; k: SortKey }) => (
     <button onClick={() => { sortKey === k ? setSortDesc(!sortDesc) : (setSortKey(k), setSortDesc(false)) }}
-      className="flex items-center gap-1 font-semibold text-sm hover:text-purple-600 transition">
+      className="flex items-center gap-1 font-semibold text-sm hover:text-rose-600 transition">
       {label}
       {sortKey === k && (sortDesc ? <ChevronDown size={14} /> : <ChevronUp size={14} />)}
     </button>
   )
 
   const getGrade = (score: number) => {
-    if (score < 1)  return { label: '🚀 Hidden Gem', color: 'text-green-600 font-bold' }
-    if (score < 5)  return { label: '🟡 Moderate',   color: 'text-yellow-600 font-semibold' }
-    if (score < 10) return { label: '🟠 Crowded',    color: 'text-orange-500 font-semibold' }
-    return               { label: '🔴 Competitive',  color: 'text-red-500 font-semibold' }
+    if (score <= 1)  return { label: '🚀 Excellent', color: 'text-green-600 font-bold' }
+    if (score <= 25) return { label: '🟢 Easy',      color: 'text-green-600 font-semibold' }
+    if (score <= 50) return { label: '🟠 Medium',    color: 'text-orange-500 font-semibold' }
+    if (score <= 75) return { label: '🔴 Hard',      color: 'text-red-500 font-semibold' }
+    return                  { label: '⚫ Very Hard',  color: 'text-slate-700 font-semibold' }
   }
 
   return (
@@ -90,10 +92,30 @@ export function KeywordTable({ data }: KeywordTableProps) {
         <table className="w-full">
           <thead className="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th className="px-4 py-3 text-left"><Header label="Matching Keywords" k="keyword" /></th>
-              <th className="px-4 py-3 text-left"><Header label="Competition Score" k="competitionScore" /></th>
-              <th className="px-4 py-3 text-left"><span className="font-semibold text-sm">Opportunity Grade</span></th>
-              <th className="px-4 py-3 text-right"><span className="font-semibold text-sm text-slate-400">Save</span></th>
+              <th className="px-4 py-3 text-left">
+                <div className="flex items-center">
+                  <Header label="Matching Keywords" k="keyword" />
+                  <InfoTooltip text="Related keyword variations of your search — each one is a potential product idea you could create and sell on TpT." />
+                </div>
+              </th>
+              <th className="px-4 py-3 text-left">
+                <div className="flex items-center">
+                  <span className="font-semibold text-sm">Keyword Difficulty</span>
+                  <InfoTooltip text="A 0–100 score showing how hard it would be to rank for this keyword on TpT — the lower the score, the easier it is to get your product seen." />
+                </div>
+              </th>
+              <th className="px-4 py-3 text-left">
+                <div className="flex items-center">
+                  <Header label="Competition Score" k="competitionScore" />
+                  <InfoTooltip text="The raw number of existing TpT products competing for this keyword, divided by 1,000 — a higher number means more sellers are already targeting it." align="right" />
+                </div>
+              </th>
+              <th className="px-4 py-3 text-right">
+                <div className="flex items-center justify-end">
+                  <span className="font-semibold text-sm text-slate-400">Save</span>
+                  <InfoTooltip text="Bookmark this keyword to your Saved Keywords list so you can come back to it later." align="right" />
+                </div>
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -101,21 +123,21 @@ export function KeywordTable({ data }: KeywordTableProps) {
               const grade = getGrade(row.competitionScore)
               const isSaved = saved.has(row.keyword)
               return (
-                <tr key={idx} className="border-b border-gray-100 hover:bg-purple-50 transition">
+                <tr key={idx} className="border-b border-gray-100 hover:bg-rose-50 transition">
                   <td className="px-4 py-3">
                     <Link href={`/keywords/${encodeURIComponent(row.keyword)}`}
-                      className="font-medium text-purple-600 hover:text-purple-800 hover:underline">
+                      className="font-medium text-gray-900 hover:text-rose-600 hover:underline">
                       {row.keyword}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 text-sm font-semibold text-gray-700">{row.competitionScore.toFixed(2)}</td>
                   <td className={`px-4 py-3 text-sm ${grade.color}`}>{grade.label}</td>
+                  <td className="px-4 py-3 text-sm font-semibold text-gray-700">{row.competitionScore.toFixed(2)}</td>
                   <td className="px-4 py-3 text-right">
                     <button
                       onClick={() => toggleSave(row)}
                       disabled={saving === row.keyword}
                       title={isSaved ? 'Remove bookmark' : 'Bookmark this keyword'}
-                      className={`p-1.5 rounded-[5px] transition ${isSaved ? 'text-purple-600 bg-purple-50' : 'text-slate-300 hover:text-purple-500'}`}
+                      className={`p-1.5 rounded-[5px] transition ${isSaved ? 'text-rose-600 bg-rose-50' : 'text-slate-300 hover:text-rose-500'}`}
                     >
                       {isSaved ? <BookmarkCheck size={16} /> : <Bookmark size={16} />}
                     </button>

@@ -16,6 +16,7 @@ interface IKeywordSearch extends mongoose.Document {
   competitionScore: number
   isRocket: boolean
   suggestions: ISuggestion[]
+  trending: ISuggestion[]
   topProducts: string[]
   lastScrapedAt: Date
   createdAt: Date
@@ -39,6 +40,7 @@ const KeywordSearchSchema = new mongoose.Schema<IKeywordSearch>(
     competitionScore: { type: Number, required: true },
     isRocket: { type: Boolean, required: true },
     suggestions: [SuggestionSchema],
+    trending: [SuggestionSchema],
     topProducts: [String],
     lastScrapedAt: { type: Date, default: Date.now },
   },

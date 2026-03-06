@@ -4,6 +4,8 @@ declare module 'next-auth' {
   interface User {
     plan?: string
     onboardingCompleted?: boolean
+    timezone?: string
+    sellerType?: string
   }
 
   interface Session {
@@ -14,6 +16,8 @@ declare module 'next-auth' {
       image?: string | null
       plan?: string
       onboardingCompleted?: boolean
+      timezone?: string
+      sellerType?: string
     }
   }
 }
@@ -23,5 +27,7 @@ declare module 'next-auth/jwt' {
     id?: string
     plan?: string
     onboardingCompleted?: boolean
+    timezone?: string
+    sellerType?: string
   }
 }

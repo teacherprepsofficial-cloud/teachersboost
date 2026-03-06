@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { signIn } from 'next-auth/react'
+import { signIn, getSession } from 'next-auth/react'
 import Link from 'next/link'
 
 export function LoginForm() {
@@ -37,8 +37,15 @@ export function LoginForm() {
         return
       }
 
-      const next = searchParams.get('next') || '/keywords'
-      router.push(next)
+      const session = await getSession()
+      const next = searchParams.get('next')
+      if (next) {
+        router.push(next)
+      } else if (!(session?.user as any)?.onboardingCompleted) {
+        router.push('/onboarding')
+      } else {
+        router.push('/keywords')
+      }
     } finally {
       setIsLoading(false)
     }
@@ -47,15 +54,15 @@ export function LoginForm() {
   const handleGoogleSignIn = async () => {
     setIsLoading(true)
     try {
-      await signIn('google', { callbackUrl: '/onboarding' })
+      await signIn('google', { callbackUrl: '/keywords' })
     } finally {
       setIsLoading(false)
     }
   }
 
   return (
-    <div className="bg-white rounded-[5px] shadow-lg p-8 max-w-md w-full">
-      <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+    <div className="bg-white rounded-[5px] shadow-sm border border-gray-200 p-8 max-w-md w-full">
+      <h1 className="text-2xl font-bold text-gray-900 mb-1">Welcome back</h1>
       <p className="text-gray-600 mb-6">Log in to your TeachersBoost account</p>
 
       {error && (
@@ -73,7 +80,7 @@ export function LoginForm() {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500"
             placeholder="your@email.com"
           />
         </div>
@@ -86,7 +93,7 @@ export function LoginForm() {
             value={formData.password}
             onChange={handleChange}
             required
-            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500"
             placeholder="Your password"
           />
         </div>
@@ -94,7 +101,7 @@ export function LoginForm() {
         <button
           type="submit"
           disabled={isLoading}
-          className="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 transition"
+          className="w-full bg-rose-600 text-white py-2 rounded-[5px] font-semibold hover:bg-rose-700 disabled:opacity-50 transition"
         >
           {isLoading ? 'Logging in...' : 'Log In'}
         </button>
@@ -137,7 +144,7 @@ export function LoginForm() {
 
       <p className="text-center text-gray-600 text-sm mt-6">
         Don't have an account?{' '}
-        <Link href="/signup" className="text-purple-600 font-semibold hover:underline">
+        <Link href="/signup" className="text-rose-600 font-semibold hover:underline">
           Sign up
         </Link>
       </p>

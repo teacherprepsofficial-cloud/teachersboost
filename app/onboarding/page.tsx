@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useSession } from 'next-auth/react'
+import { Sidebar } from '@/components/Sidebar'
+import { TopBar } from '@/components/TopBar'
 
 const GOALS = [
   { value: 'keywords', label: 'Find low-competition keywords', emoji: '🔍' },
@@ -67,8 +69,12 @@ export default function OnboardingPage() {
   const progressWidth = step === 1 ? '33%' : step === 2 ? '66%' : '100%'
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-50 to-orange-50 flex items-center justify-center p-4">
-      <div className="bg-white rounded-[5px] shadow-lg p-8 max-w-lg w-full">
+    <div className="flex flex-col h-screen bg-[#F1F5F9]">
+      <TopBar />
+      <div className="flex flex-1 overflow-hidden">
+        <Sidebar />
+        <div className="flex-1 overflow-auto flex items-center justify-center p-4">
+          <div className="bg-white rounded-[5px] shadow-lg p-8 max-w-lg w-full">
         {/* Progress bar */}
         <div className="mb-8">
           <div className="flex justify-between text-xs text-gray-400 mb-2">
@@ -77,7 +83,7 @@ export default function OnboardingPage() {
           </div>
           <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-purple-600 rounded-full transition-all duration-500"
+              className="h-full bg-rose-600 rounded-full transition-all duration-500"
               style={{ width: progressWidth }}
             />
           </div>
@@ -95,8 +101,8 @@ export default function OnboardingPage() {
                   onClick={() => setGoal(g.value)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-[5px] border-2 text-left transition ${
                     goal === g.value
-                      ? 'border-purple-600 bg-purple-50 text-purple-900 font-semibold'
-                      : 'border-gray-200 hover:border-purple-300 text-gray-700'
+                      ? 'border-rose-600 bg-rose-50 text-rose-900 font-semibold'
+                      : 'border-gray-200 hover:border-rose-300 text-gray-700'
                   }`}
                 >
                   <span className="text-xl">{g.emoji}</span>
@@ -107,7 +113,7 @@ export default function OnboardingPage() {
             <button
               onClick={() => setStep(2)}
               disabled={!goal}
-              className="mt-6 w-full bg-purple-600 text-white py-3 rounded-[5px] font-semibold hover:bg-purple-700 disabled:opacity-40 transition"
+              className="mt-6 w-full bg-rose-600 text-white py-3 rounded-[5px] font-semibold hover:bg-rose-700 disabled:opacity-40 transition"
             >
               Continue →
             </button>
@@ -126,8 +132,8 @@ export default function OnboardingPage() {
                   onClick={() => toggleGrade(g.value)}
                   className={`px-4 py-3 rounded-[5px] border-2 text-left text-sm transition ${
                     grades.includes(g.value)
-                      ? 'border-purple-600 bg-purple-50 text-purple-900 font-semibold'
-                      : 'border-gray-200 hover:border-purple-300 text-gray-700'
+                      ? 'border-rose-600 bg-rose-50 text-rose-900 font-semibold'
+                      : 'border-gray-200 hover:border-rose-300 text-gray-700'
                   }`}
                 >
                   {g.label}
@@ -144,7 +150,7 @@ export default function OnboardingPage() {
               <button
                 onClick={() => setStep(3)}
                 disabled={grades.length === 0}
-                className="flex-1 bg-purple-600 text-white py-3 rounded-[5px] font-semibold hover:bg-purple-700 disabled:opacity-40 transition"
+                className="flex-1 bg-rose-600 text-white py-3 rounded-[5px] font-semibold hover:bg-rose-700 disabled:opacity-40 transition"
               >
                 Continue →
               </button>
@@ -164,8 +170,8 @@ export default function OnboardingPage() {
                   onClick={() => setStoreStage(s.value)}
                   className={`w-full px-4 py-3 rounded-[5px] border-2 text-left transition ${
                     storeStage === s.value
-                      ? 'border-purple-600 bg-purple-50 text-purple-900 font-semibold'
-                      : 'border-gray-200 hover:border-purple-300 text-gray-700'
+                      ? 'border-rose-600 bg-rose-50 text-rose-900 font-semibold'
+                      : 'border-gray-200 hover:border-rose-300 text-gray-700'
                   }`}
                 >
                   {s.label}
@@ -182,7 +188,7 @@ export default function OnboardingPage() {
               <button
                 onClick={handleFinish}
                 disabled={!storeStage || isLoading}
-                className="flex-1 bg-purple-600 text-white py-3 rounded-[5px] font-semibold hover:bg-purple-700 disabled:opacity-40 transition"
+                className="flex-1 bg-rose-600 text-white py-3 rounded-[5px] font-semibold hover:bg-rose-700 disabled:opacity-40 transition"
               >
                 {isLoading ? 'Saving...' : "Let's go! 🚀"}
               </button>
@@ -193,6 +199,8 @@ export default function OnboardingPage() {
         <p className="text-center text-xs text-gray-400 mt-6">
           You can update these preferences anytime in Settings.
         </p>
+          </div>
+        </div>
       </div>
     </div>
   )

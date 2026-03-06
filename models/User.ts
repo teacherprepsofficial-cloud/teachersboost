@@ -18,6 +18,18 @@ interface IUser extends mongoose.Document {
   onboardingGoal?: string
   onboardingGrades?: string[]
   onboardingStoreStage?: string
+  // Dashboard preferences
+  timezone: string
+  sellerType?: 'teacher-seller' | 'seller-to-sellers'
+  // AI usage tracking (monthly)
+  aiTitleCount: number
+  aiDescCount: number
+  aiNicheCount: number
+  aiUsageMonth: string // "YYYY-MM"
+  // Subscription
+  subscriptionRenewalDate?: Date
+  cancelledAt?: Date
+  lastSeen?: Date
   createdAt: Date
   updatedAt: Date
   comparePassword(password: string): Promise<boolean>
@@ -40,6 +52,15 @@ const UserSchema = new mongoose.Schema<IUser>(
     onboardingGoal: String,
     onboardingGrades: [String],
     onboardingStoreStage: String,
+    timezone: { type: String, default: 'America/New_York' },
+    sellerType: { type: String, enum: ['teacher-seller', 'seller-to-sellers', null] },
+    aiTitleCount: { type: Number, default: 0 },
+    aiDescCount: { type: Number, default: 0 },
+    aiNicheCount: { type: Number, default: 0 },
+    aiUsageMonth: { type: String, default: '' },
+    subscriptionRenewalDate: Date,
+    cancelledAt: Date,
+    lastSeen: { type: Date, default: Date.now },
   },
   { timestamps: true }
 )

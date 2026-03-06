@@ -28,7 +28,7 @@ export default function ShopOptimizerPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-[#F1F5F9] p-6">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-4xl font-bold text-gray-900 mb-2">Shop Optimizer</h1>
         <p className="text-gray-600 mb-8">
@@ -45,7 +45,7 @@ export default function ShopOptimizerPage() {
               value={shopUrl}
               onChange={(e) => setShopUrl(e.target.value)}
               placeholder="https://www.teacherspayteachers.com/store/your-store-name"
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-purple-500"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-rose-500"
             />
           </div>
 
@@ -58,7 +58,7 @@ export default function ShopOptimizerPage() {
           <button
             type="submit"
             disabled={isLoading || !shopUrl.trim()}
-            className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 transition flex items-center gap-2"
+            className="bg-rose-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-rose-700 disabled:opacity-50 transition flex items-center gap-2"
           >
             {isLoading ? <Loader className="animate-spin" size={20} /> : <Store size={20} />}
             {isLoading ? 'Analyzing...' : 'Analyze Shop'}

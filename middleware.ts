@@ -6,15 +6,10 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const path = req.nextUrl.pathname
-        if (path.startsWith('/dashboard')) return !!token
-        if (path.startsWith('/admin')) return !!token
-        if (path.startsWith('/onboarding')) return !!token
-        if (path.startsWith('/keywords')) return !!token
-        if (path.startsWith('/shop-optimizer')) return !!token
-        if (path.startsWith('/title-generator')) return !!token
-        if (path.startsWith('/description-generator')) return !!token
-        if (path.startsWith('/pricing-calculator')) return !!token
-        if (path.startsWith('/settings')) return !!token
+        const protectedPrefixes = [
+          '/admin', '/onboarding', '/saved-keywords', '/settings',
+        ]
+        if (protectedPrefixes.some(p => path.startsWith(p))) return !!token
         return true
       },
     },
@@ -23,14 +18,7 @@ export default withAuth(
 
 export const config = {
   matcher: [
-    '/dashboard/:path*',
-    '/admin/:path*',
-    '/onboarding',
-    '/keywords/:path*',
-    '/shop-optimizer/:path*',
-    '/title-generator/:path*',
-    '/description-generator/:path*',
-    '/pricing-calculator/:path*',
-    '/settings/:path*',
+    '/admin/:path*', '/onboarding',
+    '/saved-keywords/:path*', '/settings/:path*',
   ],
 }

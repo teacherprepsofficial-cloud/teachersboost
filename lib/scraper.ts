@@ -68,11 +68,20 @@ export async function scrapeKeywordSuggestions(keyword: string): Promise<string[
 
 export async function scrapeKeywordLongTail(keyword: string): Promise<string[]> {
   const kw = keyword.toLowerCase().trim()
-  return [
+
+  const hasGrade = /\b(preschool|kindergarten|kinder|\d+st|\d+nd|\d+rd|\d+th|1st|2nd|3rd|4th|5th|6th|7th|8th|9th|10th|11th|12th|elementary|middle school|high school)\b/.test(kw)
+  const hasFormat = /\b(activities|activity|worksheets|worksheet|lesson plan|printable|free)\b/.test(kw)
+
+  const formatVariants = hasFormat ? [] : [
     `${kw} activities`,
     `${kw} worksheets`,
     `${kw} lesson plan`,
     `${kw} printable`,
+    `${kw} free`,
+  ]
+
+  const gradeVariants = hasGrade ? [] : [
+    `${kw} kindergarten`,
     `${kw} 1st grade`,
     `${kw} 2nd grade`,
     `${kw} 3rd grade`,
@@ -80,10 +89,10 @@ export async function scrapeKeywordLongTail(keyword: string): Promise<string[]> 
     `${kw} 5th grade`,
     `${kw} middle school`,
     `${kw} high school`,
-    `${kw} kindergarten`,
     `${kw} special education`,
-    `${kw} free`,
   ]
+
+  return [...formatVariants, ...gradeVariants]
 }
 
 export interface TopProduct {

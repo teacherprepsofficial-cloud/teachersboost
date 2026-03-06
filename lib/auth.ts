@@ -35,6 +35,8 @@ export const authOptions: NextAuthOptions = {
           name: user.name,
           plan: user.plan,
           onboardingCompleted: user.onboardingCompleted,
+          timezone: user.timezone || 'America/New_York',
+          sellerType: user.sellerType || null,
         }
       },
     }),
@@ -48,11 +50,24 @@ export const authOptions: NextAuthOptions = {
     signIn: '/login',
   },
   callbacks: {
-    async jwt({ token, user, account }) {
+    async jwt({ token, user, account, trigger, session }) {
       if (user) {
         token.id = user.id
         token.plan = user.plan
         token.onboardingCompleted = (user as any).onboardingCompleted
+        token.timezone = (user as any).timezone || 'America/New_York'
+        token.sellerType = (user as any).sellerType || null
+      }
+      // Update lastSeen on every JWT refresh for online tracking
+      if (token.id) {
+        await connectDB()
+        await User.updateOne({ _id: token.id }, { lastSeen: new Date() })
+      }
+      if (trigger === 'update' && session) {
+        if (session.timezone) token.timezone = session.timezone
+        if (session.sellerType !== undefined) token.sellerType = session.sellerType
+        if (session.name) token.name = session.name
+        if (session.onboardingCompleted !== undefined) token.onboardingCompleted = session.onboardingCompleted
       }
       return token
     },
@@ -61,6 +76,8 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string
         session.user.plan = token.plan as string
         session.user.onboardingCompleted = token.onboardingCompleted as boolean
+        session.user.timezone = (token.timezone as string) || 'America/New_York'
+        session.user.sellerType = (token.sellerType as string) || undefined
       }
       return session
     },

@@ -31,15 +31,13 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
           access.
         </p>
 
-        <div className="bg-purple-50 border border-purple-200 rounded-[5px] p-4 mb-6">
-          <p className="text-sm text-purple-900">
-            <strong>Pro Plan</strong> - $9.99/month
-          </p>
-          <ul className="text-sm text-purple-800 mt-2 space-y-1">
-            <li>✓ Unlimited keyword searches</li>
-            <li>✓ Unlimited shop analysis</li>
-            <li>✓ Title & description generators</li>
-            <li>✓ Pricing calculator</li>
+        <div className="bg-rose-50 border border-rose-200 rounded-[5px] p-4 mb-6">
+          <ul className="text-sm text-rose-800 space-y-1">
+            <li>✓ Unlimited access to TpT keyword explorer</li>
+            <li>✓ Unlimited access to Matching Keywords</li>
+            <li>✓ Save keywords to your notebook</li>
+            <li>✓ Generate SEO optimized product titles</li>
+            <li>✓ Generate eye-catching product descriptions</li>
           </ul>
         </div>
 
@@ -52,7 +50,7 @@ export function UpgradeModal({ isOpen, onClose, remaining, limit }: UpgradeModal
           </button>
           <button
             onClick={() => (window.location.href = '/pricing')}
-            className="flex-1 px-4 py-2 bg-purple-600 text-white rounded-[5px] font-semibold hover:bg-purple-700 transition"
+            className="flex-1 px-4 py-2 bg-rose-600 text-white rounded-[5px] font-semibold hover:bg-rose-700 transition"
           >
             Upgrade Now
           </button>

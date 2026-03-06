@@ -25,7 +25,7 @@ export function VerifyEmailContent() {
         <div className="text-5xl mb-4">🎉</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Email Confirmed!</h1>
         <p className="text-gray-600 mb-6">Your account is verified. Log in to set up your profile and start finding keyword opportunities.</p>
-        <Link href="/login?next=/onboarding" className="block w-full bg-purple-600 text-white py-3 rounded-[5px] font-semibold hover:bg-purple-700 transition">
+        <Link href="/login?next=/onboarding" className="block w-full bg-rose-600 text-white py-3 rounded-[5px] font-semibold hover:bg-rose-700 transition">
           Log In to TeachersBoost
         </Link>
       </div>
@@ -44,7 +44,7 @@ export function VerifyEmailContent() {
         <div className="text-5xl mb-4">😕</div>
         <h1 className="text-2xl font-bold text-gray-900 mb-2">Verification Failed</h1>
         <p className="text-gray-600 mb-6">{message}</p>
-        <Link href="/signup" className="block w-full bg-purple-600 text-white py-3 rounded-[5px] font-semibold hover:bg-purple-700 transition">
+        <Link href="/signup" className="block w-full bg-rose-600 text-white py-3 rounded-[5px] font-semibold hover:bg-rose-700 transition">
           Sign Up Again
         </Link>
       </div>
@@ -58,7 +58,7 @@ export function VerifyEmailContent() {
       <h1 className="text-2xl font-bold text-gray-900 mb-2">Check Your Email</h1>
       <p className="text-gray-600 mb-2">We sent a confirmation link to your email address.</p>
       <p className="text-gray-400 text-sm mb-6">Click the link in the email to activate your account. Check your spam folder if you don't see it.</p>
-      <Link href="/login" className="text-purple-600 text-sm font-semibold hover:underline">
+      <Link href="/login" className="text-rose-600 text-sm font-semibold hover:underline">
         Already verified? Log in →
       </Link>
     </div>

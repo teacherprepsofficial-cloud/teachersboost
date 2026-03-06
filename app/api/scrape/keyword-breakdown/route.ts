@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { scrapeKeywordResults, scrapeTopProducts, scrapeKeywordLongTail, scrapeFirstProduct } from '@/lib/scraper'
+import { scrapeKeywordResults, scrapeTopProducts, scrapeKeywordSuggestions, scrapeKeywordLongTail, scrapeFirstProduct } from '@/lib/scraper'
 
 export async function POST(req: NextRequest) {
   try {
@@ -15,7 +15,12 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Keyword required' }, { status: 400 })
     }
 
-    const longTailKeywords = await scrapeKeywordLongTail(keyword)
+    // Use Algolia (real TpT autocomplete) for matching keywords.
+    // Fall back to algorithmic long-tail only if Algolia returns fewer than 3.
+    const algoliaKeywords = await scrapeKeywordSuggestions(keyword)
+    const longTailKeywords = algoliaKeywords.length >= 3
+      ? algoliaKeywords
+      : [...algoliaKeywords, ...(await scrapeKeywordLongTail(keyword))]
 
     const SORT_ORDERS = [
       { key: 'topRanking',  order: 'Relevance',   label: '#1 Top Ranking Product',  icon: '🏆' },

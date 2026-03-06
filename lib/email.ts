@@ -19,8 +19,8 @@ export async function sendVerificationEmail(email: string, name: string, token: 
         </p>
 
         <a href="${verifyUrl}"
-          style="display: inline-block; background: #7C3AED; color: white; padding: 14px 32px;
-                 border-radius: 12px; font-weight: 700; font-size: 16px; text-decoration: none;">
+          style="display: inline-block; background: #E11D48; color: white; padding: 14px 32px;
+                 border-radius: 5px; font-weight: 700; font-size: 16px; text-decoration: none;">
           Confirm My Email
         </a>
 

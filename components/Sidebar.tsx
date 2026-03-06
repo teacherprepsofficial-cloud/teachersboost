@@ -3,39 +3,70 @@
 import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, Store, Type, FileText, DollarSign, Settings, LogOut, Menu, LayoutDashboard, Bookmark } from 'lucide-react'
-import { useState } from 'react'
+import { Search, LogOut, Menu, TrendingUp, Bookmark, ShieldCheck, Wand2, FileText, Telescope, Star, Shield, ScrollText, HelpCircle } from 'lucide-react'
+import { useState, useEffect } from 'react'
 import { FeedbackWidget } from './FeedbackWidget'
 
+function LiveDate() {
+  const [now, setNow] = useState(new Date())
+  useEffect(() => {
+    const t = setInterval(() => setNow(new Date()), 60000)
+    return () => clearInterval(t)
+  }, [])
+  const label = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' })
+  return (
+    <div className="px-5 py-2.5 border-b border-gray-100 text-center">
+      <p className="font-mono text-[10px] tracking-wide text-gray-400">{label}</p>
+    </div>
+  )
+}
+
 const menuItems = [
-  { href: '/dashboard',              label: 'Dashboard',             icon: LayoutDashboard },
-  { href: '/keywords',               label: 'Keyword Research',      icon: Search },
-  { href: '/shop-optimizer',         label: 'Shop Optimizer',        icon: Store },
-  { href: '/title-generator',        label: 'Title Generator',       icon: Type },
-  { href: '/description-generator',  label: 'Description Generator', icon: FileText },
-  { href: '/pricing-calculator',     label: 'Pricing Calculator',    icon: DollarSign },
-  { href: '/saved-keywords',         label: 'Saved Keywords',        icon: Bookmark },
-  { href: '/settings',               label: 'Settings',              icon: Settings },
+  { href: '/keywords',              label: 'Keyword Explorer',  icon: Search },
+  { href: '/trending',              label: 'Trending Keywords',  icon: TrendingUp },
+  { href: '/niche-finder',          label: 'Niche Finder',       icon: Telescope },
+  { href: '/title-generator',       label: 'Title Generator',    icon: Wand2 },
+  { href: '/description-generator', label: 'Description Writer', icon: FileText },
+  { href: '/saved-keywords',        label: 'Keyword Notebook',   icon: Bookmark },
+  { href: '/testimonials',          label: 'Testimonials',       icon: Star },
 ]
+
+const footerLinks = [
+  { href: '/faq',     label: 'FAQ',         icon: HelpCircle },
+  { href: '/privacy', label: 'Privacy',     icon: Shield },
+  { href: '/terms',   label: 'Terms',       icon: ScrollText },
+]
+
+const ADMIN_EMAILS = ['teachersboost@gmail.com', 'elliottzelinskas@gmail.com']
 
 function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const { data: session } = useSession()
   const pathname = usePathname()
+  const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email)
 
   return (
-    <div className="flex flex-col h-full bg-[#0f172a] text-white">
-      {/* Logo */}
-      <div className="px-6 py-5 border-b border-white/10">
-        <Link href="/dashboard" className="text-xl font-black tracking-tight text-white">
-          TeachersBoost
-        </Link>
-      </div>
+    <div className="flex flex-col h-full w-full bg-white border-r border-gray-200 text-gray-800">
+      <LiveDate />
 
       {/* Nav */}
       <nav className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+        {isAdmin && (
+          <Link
+            href="/admin"
+            onClick={onNavigate}
+            className={`flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-semibold transition ${
+              pathname === '/admin'
+                ? 'bg-rose-600 text-white'
+                : 'text-gray-700 hover:bg-rose-50 hover:text-gray-900'
+            }`}
+          >
+            <ShieldCheck size={16} />
+            Admin
+          </Link>
+        )}
         {menuItems.map((item) => {
           const Icon = item.icon
-          const isActive = pathname === item.href || (item.href !== '/dashboard' && pathname.startsWith(item.href))
+          const isActive = pathname === item.href || (item.href !== '/trending' && item.href !== '/keywords' && pathname.startsWith(item.href))
           return (
             <Link
               key={item.href}
@@ -43,30 +74,59 @@ function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
               onClick={onNavigate}
               className={`flex items-center gap-3 px-3 py-2.5 rounded-[5px] text-sm font-medium transition ${
                 isActive
-                  ? 'bg-purple-600 text-white'
-                  : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                  ? 'bg-rose-50 text-gray-900 font-semibold'
+                  : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
               }`}
             >
-              <Icon size={17} />
+              <Icon size={16} className={isActive ? 'text-rose-600' : 'text-gray-400'} />
               {item.label}
             </Link>
           )
         })}
+
+        {/* Footer nav links */}
+        <div className="pt-3 mt-3 border-t border-gray-100">
+          {footerLinks.map((item) => {
+            const Icon = item.icon
+            const isActive = pathname === item.href
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onNavigate}
+                className={`flex items-center gap-3 px-3 py-2 rounded-[5px] text-xs font-medium transition ${
+                  isActive
+                    ? 'bg-rose-50 text-gray-900'
+                    : 'text-gray-400 hover:bg-gray-100 hover:text-gray-600'
+                }`}
+              >
+                <Icon size={13} className={isActive ? 'text-rose-500' : ''} />
+                {item.label}
+              </Link>
+            )
+          })}
+        </div>
       </nav>
 
       {/* Footer */}
-      <div className="px-3 py-4 border-t border-white/10 space-y-1">
-        <div className="px-3 py-2.5 bg-white/5 rounded-[5px]">
-          <p className="text-xs text-slate-500 uppercase tracking-wide mb-0.5">Logged in as</p>
-          <p className="text-sm font-semibold text-white truncate">{session?.user?.email}</p>
-        </div>
-        <button
-          onClick={() => signOut({ callbackUrl: '/' })}
-          className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-slate-400 hover:bg-white/5 hover:text-white rounded-[5px] transition"
-        >
-          <LogOut size={17} />
-          Log Out
-        </button>
+      <div className="px-3 py-4 border-t border-gray-100">
+        {session ? (
+          <button
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-800 rounded-[5px] transition"
+          >
+            <LogOut size={16} />
+            Log Out
+          </button>
+        ) : (
+          <a
+            href="/login"
+            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm text-gray-500 hover:bg-gray-100 hover:text-gray-800 rounded-[5px] transition"
+          >
+            <LogOut size={16} />
+            Log In
+          </a>
+        )}
       </div>
     </div>
   )
@@ -78,21 +138,21 @@ export function Sidebar() {
   return (
     <>
       {/* Desktop */}
-      <div className="hidden md:flex w-60 flex-shrink-0">
+      <div className="hidden md:flex w-64 flex-shrink-0">
         <SidebarContent />
       </div>
 
       {/* Mobile toggle */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="md:hidden fixed top-4 left-4 z-50 bg-purple-600 text-white p-2 rounded-[5px]"
+        className="md:hidden fixed top-4 left-4 z-50 bg-rose-600 text-white p-2 rounded-[5px]"
       >
         <Menu size={22} />
       </button>
 
       {/* Mobile overlay */}
       {isOpen && (
-        <div className="md:hidden fixed inset-0 bg-black/60 z-40" onClick={() => setIsOpen(false)} />
+        <div className="md:hidden fixed inset-0 bg-black/40 z-40" onClick={() => setIsOpen(false)} />
       )}
 
       {/* Mobile drawer */}

@@ -5,7 +5,10 @@ import { useSession } from 'next-auth/react'
 import { Search, Loader, TrendingUp } from 'lucide-react'
 import Link from 'next/link'
 import { KeywordTable } from '@/components/KeywordTable'
+import { InfoTooltip } from '@/components/InfoTooltip'
 import { UpgradeModal } from '@/components/UpgradeModal'
+import { FilterPanel } from '@/components/FilterPanel'
+import { SignupPromptModal } from '@/components/SignupPromptModal'
 
 interface KeywordResult {
   keyword: string
@@ -22,10 +25,11 @@ interface TrendingKeyword {
 }
 
 function getTrendingGrade(score: number) {
-  if (score < 1)  return { label: '🚀 Hidden Gem',  color: 'text-green-700',  bg: 'bg-green-100' }
-  if (score < 5)  return { label: '🟡 Moderate',    color: 'text-yellow-700', bg: 'bg-yellow-100' }
-  if (score < 10) return { label: '🟠 Crowded',     color: 'text-orange-600', bg: 'bg-orange-100' }
-  return               { label: '🔴 Competitive',   color: 'text-red-600',    bg: 'bg-red-100' }
+  if (score <= 1)  return { label: '🚀 Excellent', color: 'text-green-700',  bg: 'bg-green-100' }
+  if (score <= 25) return { label: '🟢 Easy',      color: 'text-green-700',  bg: 'bg-green-100' }
+  if (score <= 50) return { label: '🟠 Medium',    color: 'text-orange-600', bg: 'bg-orange-100' }
+  if (score <= 75) return { label: '🔴 Hard',      color: 'text-red-600',    bg: 'bg-red-100' }
+  return                  { label: '⚫ Very Hard',  color: 'text-slate-700',  bg: 'bg-slate-100' }
 }
 
 export default function KeywordsPage() {
@@ -37,10 +41,31 @@ export default function KeywordsPage() {
   const [error, setError] = useState('')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [upgradeInfo, setUpgradeInfo] = useState({ remaining: 0, limit: 0 })
+  const [showSignupModal, setShowSignupModal] = useState(false)
+  const [filterSelected, setFilterSelected] = useState<Record<string, string[]>>({})
 
   const handleSearch = async (kw?: string) => {
     const query = kw || searchInput
-    if (!query.trim() || !session?.user?.email) return
+    if (!query.trim()) return
+    if (!session?.user?.email) {
+      setShowSignupModal(true)
+      return
+    }
+
+    // Reject invalid inputs
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const urlRegex = /^https?:\/\//i
+    const profanityList = ['fuck', 'shit', 'ass', 'bitch', 'cunt', 'dick', 'pussy', 'cock', 'bastard', 'damn', 'crap', 'piss', 'whore', 'slut', 'nigger', 'nigga', 'faggot', 'fag', 'retard']
+    const lowerQuery = query.trim().toLowerCase()
+    const hasProfanity = profanityList.some(w => lowerQuery.split(/\s+/).includes(w) || lowerQuery === w)
+    if (emailRegex.test(query.trim()) || urlRegex.test(query.trim())) {
+      setError('Please enter a keyword or topic — not an email address or URL.')
+      return
+    }
+    if (hasProfanity) {
+      setError('Please enter an appropriate keyword related to TpT products.')
+      return
+    }
 
     if (kw) setSearchInput(kw)
     setIsLoading(true)
@@ -66,6 +91,11 @@ export default function KeywordsPage() {
 
       const data = await res.json()
 
+      if (data.noResults) {
+        setError('No results found on TpT for this keyword. Try a different topic.')
+        return
+      }
+
       setResults([
         { keyword: data.keyword, resultCount: data.resultCount, competitionScore: data.competitionScore, isRocket: data.isRocket },
         ...(data.suggestions || []).map((s: any) => ({
@@ -85,12 +115,30 @@ export default function KeywordsPage() {
     handleSearch()
   }
 
+  const handleFilterChange = (group: string, value: string, checked: boolean) => {
+    setFilterSelected(prev => {
+      const current = prev[group] || []
+      return {
+        ...prev,
+        [group]: checked ? [...current, value] : current.filter(v => v !== value),
+      }
+    })
+  }
+
+  const handleFilterClear = () => setFilterSelected({})
+
+  const handleFilterSearch = (query: string) => {
+    setSearchInput(query)
+    handleSearch(query)
+  }
+
   return (
     <div className="min-h-screen bg-[#F1F5F9] p-8">
       <div className="max-w-5xl mx-auto">
 
-        <h1 className="text-4xl font-extrabold text-slate-900 mb-1">Keyword Research</h1>
-        <p className="text-slate-400 text-sm mb-8 uppercase tracking-wide">Discover high-opportunity keywords for your TpT products</p>
+        <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight">Teachers Pay Teachers Seller Tool</h1>
+        <p className="text-xl font-bold text-rose-600 mb-3">Find profitable keywords &nbsp;|&nbsp; Optimize product listings &nbsp;|&nbsp; Boost TpT sales</p>
+        <p className="text-sm text-slate-500 mb-8">Start by typing any keyword into the search box below. Then, go deeper by using the <span className="font-semibold text-slate-700">Find Keywords with Filters</span> box to discover more niche TpT product ideas.</p>
 
         {/* Search Bar */}
         <form onSubmit={handleSubmit} className="mb-8">
@@ -99,19 +147,27 @@ export default function KeywordsPage() {
               type="text"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Enter a keyword — e.g. 'fractions', 'American Revolution'..."
-              className="flex-1 px-5 py-4 border-2 border-gray-300 border-r-0 rounded-l-[5px] focus:outline-none focus:border-purple-500 text-base font-medium bg-white"
+              placeholder="Type your product idea here — e.g. '3rd grade math spiral review'"
+              className="flex-1 px-5 py-4 border-2 border-gray-300 border-r-0 rounded-l-[5px] focus:outline-none focus:border-rose-500 text-base font-medium bg-white"
             />
             <button
               type="submit"
               disabled={isLoading}
-              className="bg-purple-600 hover:bg-purple-700 text-white px-6 py-4 rounded-r-[5px] font-bold transition disabled:opacity-50 flex items-center gap-2"
+              className="bg-rose-600 hover:bg-rose-700 text-white px-6 py-4 rounded-r-[5px] font-bold transition disabled:opacity-50 flex items-center gap-2"
             >
               {isLoading ? <Loader className="animate-spin" size={20} /> : <Search size={20} />}
               {isLoading ? 'Analyzing...' : 'Search'}
             </button>
           </div>
         </form>
+
+        <FilterPanel
+          selected={filterSelected}
+          onChange={handleFilterChange}
+          onSearch={handleFilterSearch}
+          onClear={handleFilterClear}
+          baseKeyword={searchInput}
+        />
 
         {error && (
           <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded-[5px] mb-6 text-sm font-medium">
@@ -174,7 +230,7 @@ export default function KeywordsPage() {
           <div className="text-center py-20 text-slate-400">
             <Search size={52} className="mx-auto mb-4 opacity-30" />
             <p className="text-lg font-medium">Enter a keyword above to get started</p>
-            <p className="text-sm mt-1">See competition scores, trending variations, and pricing data</p>
+            <p className="text-sm mt-1">See competition scores, keyword difficulty, and related keyword variations</p>
           </div>
         )}
 
@@ -185,6 +241,10 @@ export default function KeywordsPage() {
         onClose={() => setShowUpgradeModal(false)}
         remaining={upgradeInfo.remaining}
         limit={upgradeInfo.limit}
+      />
+      <SignupPromptModal
+        isOpen={showSignupModal}
+        onClose={() => setShowSignupModal(false)}
       />
     </div>
   )

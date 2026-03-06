@@ -47,13 +47,13 @@ export function FeedbackWidget() {
     <>
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 bg-purple-600 text-white p-4 rounded-full shadow-lg hover:bg-purple-700 transition z-40"
+        className="fixed bottom-6 right-6 bg-rose-600 text-white p-4 rounded-full shadow-lg hover:bg-rose-700 transition z-40"
       >
         <MessageCircle size={24} />
       </button>
 
       {isOpen && (
-        <div className="fixed bottom-24 right-6 bg-white rounded-[5px] shadow-lg p-6 w-80 z-40">
+        <div className="fixed bottom-24 right-6 bg-white rounded-[5px] shadow-2xl border border-gray-300 p-6 w-80 z-40">
           <div className="flex justify-between items-center mb-4">
             <h3 className="font-bold text-gray-900">Send Feedback</h3>
             <button
@@ -100,7 +100,7 @@ export function FeedbackWidget() {
               <button
                 type="submit"
                 disabled={isLoading || !message.trim()}
-                className="w-full bg-purple-600 text-white py-2 rounded-lg font-semibold hover:bg-purple-700 disabled:opacity-50 transition"
+                className="w-full bg-rose-600 text-white py-2 rounded-lg font-semibold hover:bg-rose-700 disabled:opacity-50 transition"
               >
                 {isLoading ? 'Sending...' : 'Send'}
               </button>

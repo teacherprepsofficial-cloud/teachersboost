@@ -56,11 +56,32 @@ export async function POST(req: NextRequest) {
       keywordData &&
       new Date().getTime() - new Date(keywordData.lastScrapedAt).getTime() < 86400000
     ) {
-      return NextResponse.json(keywordData)
+      // Always fetch trending live so it's never missing from cache hits
+      const cachedTrending = await scrapeKeywordSuggestions(keyword)
+      const trendingWithScores = await Promise.all(
+        cachedTrending.map(async (kw) => {
+          const r = await scrapeKeywordResults(kw)
+          return { keyword: kw, resultCount: r.resultCount, competitionScore: r.competitionScore, isRocket: r.isRocket }
+        })
+      )
+      return NextResponse.json({ ...keywordData.toObject(), trending: trendingWithScores })
     }
 
     // Scrape main keyword
     const results = await scrapeKeywordResults(keyword)
+
+    // If TpT returns no results, this is not a valid TpT keyword — skip all suggestions
+    if (results.resultCount === 0) {
+      return NextResponse.json({
+        keyword: keyword.toLowerCase(),
+        resultCount: 0,
+        competitionScore: 0,
+        isRocket: false,
+        suggestions: [],
+        trending: [],
+        noResults: true,
+      })
+    }
 
     // Trending = TpT Algolia suggestions with competition scores
     const trendingSuggestions = await scrapeKeywordSuggestions(keyword)
@@ -92,6 +113,7 @@ export async function POST(req: NextRequest) {
       competitionScore: results.competitionScore,
       isRocket: results.isRocket,
       suggestions: suggestionsWithScores,
+      trending: trendingKeywords,
       topProducts: [],
       lastScrapedAt: new Date(),
     }
@@ -110,7 +132,7 @@ export async function POST(req: NextRequest) {
       await user.save()
     }
 
-    return NextResponse.json({ ...keywordData.toObject(), trending: trendingKeywords })
+    return NextResponse.json(keywordData.toObject())
   } catch (error) {
     console.error('Scrape error:', error)
     return NextResponse.json({ error: 'Failed to scrape keyword data' }, { status: 500 })
