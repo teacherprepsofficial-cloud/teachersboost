@@ -52,6 +52,7 @@ export async function POST(req: Request) {
       customer: customerId,
       mode: 'subscription',
       line_items: [{ price: priceId, quantity: 1 }],
+      allow_promotion_codes: true,
       success_url: `${baseUrl}/settings?upgraded=1`,
       cancel_url: `${baseUrl}/pricing`,
       metadata: { userId: user._id.toString(), plan },
