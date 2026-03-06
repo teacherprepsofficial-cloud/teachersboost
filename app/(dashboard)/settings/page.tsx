@@ -91,8 +91,8 @@ function SettingsInner() {
       .then(d => {
         if (d) {
           setUsage(d)
-          // If coming back from Stripe and session plan doesn't match DB, refresh JWT
-          if (justUpgraded && d.plan && d.plan !== session?.user?.plan) {
+          // Always sync JWT to DB plan on this page
+          if (d.plan && d.plan !== session?.user?.plan) {
             update({ plan: d.plan })
           }
         }
@@ -107,7 +107,8 @@ function SettingsInner() {
     }
   }, [session?.user?.email])
 
-  const plan = session?.user?.plan
+  // Use usage.plan (from DB) as source of truth — session JWT can lag after upgrade
+  const plan = usage?.plan || session?.user?.plan
   const isPaidPlan      = plan === 'starter' || plan === 'pro'
   const cancelAtPeriodEnd = usage?.cancelAtPeriodEnd ?? false
   const renewalDate     = usage?.subscriptionRenewalDate
