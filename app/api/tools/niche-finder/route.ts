@@ -6,8 +6,8 @@ import { User } from '@/models/User'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { scrapeKeywordResults } from '@/lib/scraper'
 
-const LIMITS: Record<string, number> = { free: 3, starter: Infinity, pro: Infinity, admin: Infinity }
-const MONTHLY_CAPS: Record<string, number> = { free: 3, starter: Infinity, pro: Infinity, admin: Infinity }
+const LIMITS: Record<string, number> = { free: 5, starter: Infinity, pro: Infinity, admin: Infinity }
+const MONTHLY_CAPS: Record<string, number> = { free: 5, starter: Infinity, pro: Infinity, admin: Infinity }
 const RESULT_LIMIT: Record<string, number> = { free: 5, starter: 25, pro: 25, admin: 25 }
 
 export async function POST(req: NextRequest) {
