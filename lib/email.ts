@@ -41,7 +41,7 @@ export async function sendWeeklyOpportunitiesEmail(
   await resend.emails.send({
     from: 'TeachersBoost <noreply@teachersboost.com>',
     to: email,
-    subject: `🚀 Your 10 TpT Product Ideas This Week — ${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}`,
+    subject: `🚀 Your 10 TpT Product Ideas This Week (${new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric' })})`,
     html: `
       <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 20px; background: #ffffff;">
 
@@ -51,11 +51,11 @@ export async function sendWeeklyOpportunitiesEmail(
         </div>
 
         <h1 style="font-size: 24px; font-weight: 800; color: #111827; margin: 0 0 12px 0; line-height: 1.3;">
-          Hi ${name} — here are your 10 TpT product ideas for this week! 🎉
+          Hi ${name}, here are your 10 TpT product ideas for this week! 🎉
         </h1>
 
         <p style="color: #475569; font-size: 15px; line-height: 1.7; margin: 0 0 28px 0;">
-          Every Thursday we hand-pick the best low-competition keyword opportunities on TpT so you can spend less time researching and more time creating. These keywords have been scored using live TpT data — the ones marked 🚀 Excellent are your best bets for getting found fast.
+          Every Thursday we hand-pick the best low-competition keyword opportunities on TpT so you can spend less time researching and more time creating. These keywords have been scored using live TpT data. The ones marked 🚀 Excellent are your best bets for getting found fast.
         </p>
 
         <!-- Keyword Table -->
@@ -76,7 +76,7 @@ export async function sendWeeklyOpportunitiesEmail(
         </table>
 
         <p style="color: #475569; font-size: 15px; line-height: 1.7; margin: 0 0 28px 0;">
-          Pick one keyword that excites you and create a product around it this week. Consistency is what separates the top TpT sellers from everyone else — and you've got the data to back you up. Good luck! 💪
+          Pick one keyword that excites you and create a product around it this week. Consistency is what separates the top TpT sellers from everyone else, and you've got the data to back you up. Good luck! 💪
         </p>
 
         <!-- CTA -->
@@ -89,12 +89,12 @@ export async function sendWeeklyOpportunitiesEmail(
         </div>
 
         <p style="color: #64748B; font-size: 14px; line-height: 1.6; margin: 0 0 24px 0;">
-          — The TeachersBoost Team
+          The TeachersBoost Team
         </p>
 
         <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
         <p style="color: #CBD5E1; font-size: 12px; text-align: center; margin: 0;">
-          TeachersBoost — TpT Seller Tools &nbsp;·&nbsp;
+          TeachersBoost TpT Seller Tools &nbsp;·&nbsp;
           <a href="${siteUrl}" style="color: #CBD5E1; text-decoration: none;">teachersboost.vercel.app</a>
           &nbsp;·&nbsp;
           You're receiving this because you opted in at signup.
@@ -127,11 +127,11 @@ export async function sendPasswordResetEmail(email: string, name: string, token:
         </a>
 
         <p style="color: #94A3B8; font-size: 13px; margin-top: 32px;">
-          This link expires in 1 hour. If you didn't request a password reset, you can safely ignore this email — your password won't change.
+          This link expires in 1 hour. If you didn't request a password reset, you can safely ignore this email. Your password won't change.
         </p>
 
         <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 32px 0;" />
-        <p style="color: #CBD5E1; font-size: 12px;">TeachersBoost — TpT Seller Tools</p>
+        <p style="color: #CBD5E1; font-size: 12px;">TeachersBoost TpT Seller Tools</p>
       </div>
     `,
   })
@@ -157,7 +157,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
         </h1>
 
         <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
-          You've just joined the smartest TpT sellers who use data — not guesswork — to grow their stores. Here's what you can do right now:
+          You've just joined the smartest TpT sellers who use data (not guesswork) to grow their stores. Here's what you can do right now:
         </p>
 
         <!-- Feature list -->
@@ -180,7 +180,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
             <span style="font-size: 20px; margin-right: 12px;">📈</span>
             <div>
               <p style="margin: 0 0 2px 0; font-weight: 700; color: #111827; font-size: 15px;">TpT Trending Keywords</p>
-              <p style="margin: 0; color: #64748B; font-size: 14px;">See what buyers are searching for on TpT right now — live.</p>
+              <p style="margin: 0; color: #64748B; font-size: 14px;">See what buyers are searching for on TpT right now, live.</p>
             </div>
           </div>
         </div>
@@ -201,7 +201,7 @@ export async function sendWelcomeEmail(email: string, name: string) {
 
         <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
         <p style="color: #CBD5E1; font-size: 12px; text-align: center; margin: 0;">
-          TeachersBoost — TpT Seller Tools &nbsp;·&nbsp;
+          TeachersBoost TpT Seller Tools &nbsp;·&nbsp;
           <a href="${siteUrl}" style="color: #CBD5E1;">teachersboost.vercel.app</a>
         </p>
       </div>
@@ -222,7 +222,7 @@ export async function sendVerificationEmail(email: string, name: string, token: 
           Welcome to TeachersBoost! 👋
         </h1>
         <p style="color: #475569; font-size: 16px; margin-bottom: 32px;">
-          Hi ${name}, just one step left — confirm your email to start finding keyword opportunities on TpT.
+          Hi ${name}, just one step left. Confirm your email to start finding keyword opportunities on TpT.
         </p>
 
         <a href="${verifyUrl}"
@@ -236,7 +236,7 @@ export async function sendVerificationEmail(email: string, name: string, token: 
         </p>
 
         <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 32px 0;" />
-        <p style="color: #CBD5E1; font-size: 12px;">TeachersBoost — TpT Seller Tools</p>
+        <p style="color: #CBD5E1; font-size: 12px;">TeachersBoost TpT Seller Tools</p>
       </div>
     `,
   })
