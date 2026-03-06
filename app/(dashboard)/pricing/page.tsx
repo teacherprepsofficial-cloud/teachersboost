@@ -41,12 +41,10 @@ const plans = [
     badge: null as string | null,
     stripePlan: 'starter',
     features: [
-      { label: 'Keyword Research — 3 searches/week', highlight: false },
+      { label: 'Unlimited Keyword Research', highlight: false },
       { label: 'Keyword Difficulty Score', highlight: false },
       { label: 'Top Competing Products', highlight: false },
       { label: 'Related Keyword Variations', highlight: false },
-      { label: 'Niche Finder — 5 searches/month (top 5 results)', highlight: false },
-      { label: 'Unlimited Keyword Research', highlight: false },
       { label: 'Niche Finder — unlimited searches (top 10 results)', highlight: false },
       { label: 'Save up to 50 Keywords', highlight: false },
       { label: 'Title Generator — 20/month', highlight: false },
