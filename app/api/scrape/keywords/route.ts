@@ -28,8 +28,8 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'User not found' }, { status: 404 })
     }
 
-    // Check freemium limits (weekly: 3 searches per week)
-    if (user.plan !== 'pro' && user.plan !== 'admin') {
+    // Check freemium limits (weekly: 3 searches per week — free only)
+    if (user.plan !== 'pro' && user.plan !== 'starter' && user.plan !== 'admin') {
       const now = new Date()
       const lastDate = new Date(user.dailySearchDate)
       const msPerWeek = 7 * 24 * 60 * 60 * 1000

@@ -65,7 +65,7 @@ const plans = [
     badge: 'BEST VALUE',
     stripePlan: 'pro',
     features: [
-      { label: 'Keyword Research — 3 searches/week', highlight: false },
+      { label: 'Unlimited Keyword Research', highlight: false },
       { label: 'Keyword Difficulty Score', highlight: false },
       { label: 'Top Competing Products', highlight: false },
       { label: 'Related Keyword Variations', highlight: false },
