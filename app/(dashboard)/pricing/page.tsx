@@ -2,7 +2,7 @@
 
 import { useSession } from 'next-auth/react'
 import Link from 'next/link'
-import { Check, X } from 'lucide-react'
+import { Check } from 'lucide-react'
 import { useState } from 'react'
 
 const plans = [
@@ -13,43 +13,39 @@ const plans = [
     monthlyPeriod: 'forever',
     yearlyPeriod: 'forever',
     description: 'Try TeachersBoost with no credit card required.',
+    inherits: null as string | null,
     cta: 'Get Started Free',
     ctaHref: '/signup',
     highlight: false,
     badge: null as string | null,
     stripePlan: null as string | null,
     features: [
-      { label: 'Keyword Research — 3 searches/week', included: true },
-      { label: 'Keyword Difficulty Score', included: true },
-      { label: 'Top Competing Products', included: true },
-      { label: 'Related Keyword Variations', included: true },
-      { label: 'Niche Finder — 5 searches/month (top 5 results)', included: true },
-      { label: 'Save Keywords', included: false },
-      { label: 'Title Generator', included: false },
-      { label: 'Description Writer', included: false },
+      'Keyword Research — 3 searches/week',
+      'Keyword Difficulty Score',
+      'Top Competing Products',
+      'Related Keyword Variations',
+      'Niche Finder — 5 searches/month (top 5 results)',
     ],
   },
   {
-    name: 'Starter',
+    name: 'Boost',
     monthlyPrice: '$9.99',
     yearlyPrice: '$7.99',
     monthlyPeriod: '/month',
     yearlyPeriod: '/mo, billed yearly',
     description: 'Unlimited research + AI tools for growing sellers.',
-    cta: 'Start Starter Plan',
+    inherits: 'Everything in Free, plus:',
+    cta: 'Start Boost Plan',
     ctaHref: '/signup',
     highlight: false,
     badge: null as string | null,
     stripePlan: 'starter',
     features: [
-      { label: 'Unlimited Keyword Research', included: true },
-      { label: 'Keyword Difficulty Score', included: true },
-      { label: 'Top Competing Products', included: true },
-      { label: 'Related Keyword Variations', included: true },
-      { label: 'Niche Finder — unlimited searches (top 25 results)', included: true },
-      { label: 'Save up to 50 Keywords', included: true },
-      { label: 'Title Generator — 20/month', included: true },
-      { label: 'Description Writer — 20/month', included: true },
+      'Unlimited Keyword Research',
+      'Niche Finder — unlimited searches (top 25 results)',
+      'Save up to 50 Keywords',
+      'Title Generator — 20/month',
+      'Description Writer — 20/month',
     ],
   },
   {
@@ -58,21 +54,17 @@ const plans = [
     yearlyPrice: '$11.99',
     monthlyPeriod: '/month',
     yearlyPeriod: '/mo, billed yearly',
-    description: 'Everything in Starter with higher AI limits.',
+    description: 'Everything in Boost, with higher AI limits.',
+    inherits: 'Everything in Boost, plus:',
     cta: 'Go Pro',
     ctaHref: '/signup',
     highlight: true,
     badge: 'BEST VALUE',
     stripePlan: 'pro',
     features: [
-      { label: 'Unlimited Keyword Research', included: true },
-      { label: 'Keyword Difficulty Score', included: true },
-      { label: 'Top Competing Products', included: true },
-      { label: 'Related Keyword Variations', included: true },
-      { label: 'Niche Finder — unlimited searches (top 25 results)', included: true },
-      { label: 'Save up to 100 Keywords', included: true },
-      { label: 'Title Generator — 75/month', included: true },
-      { label: 'Description Writer — 75/month', included: true },
+      'Save up to 100 Keywords',
+      'Title Generator — 75/month',
+      'Description Writer — 75/month',
     ],
   },
 ]
@@ -193,15 +185,16 @@ export default function PricingPage() {
                     </Link>
                   )}
 
+                  {plan.inherits && (
+                    <p className="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">
+                      {plan.inherits}
+                    </p>
+                  )}
                   <ul className="space-y-2.5">
                     {plan.features.map((f) => (
-                      <li key={f.label} className="flex items-start gap-2.5">
-                        {f.included
-                          ? <Check size={15} className="text-rose-500 shrink-0 mt-0.5" />
-                          : <X size={15} className="text-gray-300 shrink-0 mt-0.5" />}
-                        <span className={`text-xs leading-snug ${f.included ? 'text-gray-700' : 'text-gray-400'}`}>
-                          {f.label}
-                        </span>
+                      <li key={f} className="flex items-start gap-2.5">
+                        <Check size={15} className="text-rose-500 shrink-0 mt-0.5" />
+                        <span className="text-xs leading-snug text-gray-700">{f}</span>
                       </li>
                     ))}
                   </ul>
