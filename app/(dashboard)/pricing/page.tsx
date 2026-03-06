@@ -69,7 +69,7 @@ const plans = [
       { label: 'Keyword Difficulty Score', highlight: false },
       { label: 'Top Competing Products', highlight: false },
       { label: 'Related Keyword Variations', highlight: false },
-      { label: 'Niche Finder — unlimited searches (top 25 results)', highlight: false },
+      { label: 'Niche Finder — unlimited searches (top 25 results)', highlight: true },
       { label: 'Save up to 100 Keywords', highlight: true },
       { label: 'Title Generator — 75/month', highlight: true },
       { label: 'Description Writer — 75/month', highlight: true },
