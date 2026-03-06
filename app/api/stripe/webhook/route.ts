@@ -36,6 +36,7 @@ export async function POST(req: Request) {
       await User.findByIdAndUpdate(userId, {
         plan,
         stripeSubscriptionId: subscriptionId,
+        stripeCustomerId: session.customer as string,
         subscriptionRenewalDate: renewalDate,
         cancelledAt: null,
       })

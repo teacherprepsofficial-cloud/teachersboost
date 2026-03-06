@@ -26,11 +26,11 @@ export async function POST() {
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
     const portalSession = await stripe.billingPortal.sessions.create({
       customer: user.stripeCustomerId,
-      return_url: `${process.env.NEXTAUTH_URL}/settings`,
+      return_url: 'https://teachersboost.vercel.app/settings',
     })
     return NextResponse.json({ url: portalSession.url })
-  } catch (err) {
-    console.error('[portal] Stripe error:', err)
-    return NextResponse.json({ error: 'Could not open billing portal.' }, { status: 500 })
+  } catch (err: any) {
+    console.error('[portal] Stripe error:', err?.message, err?.code, err?.type)
+    return NextResponse.json({ error: err?.message || 'Could not open billing portal.' }, { status: 500 })
   }
 }
