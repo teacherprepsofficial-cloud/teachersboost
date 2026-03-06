@@ -43,15 +43,20 @@ export default function KeywordsPage() {
   const [showSignupModal, setShowSignupModal] = useState(false)
   const [filterSelected, setFilterSelected] = useState<Record<string, string[]>>({})
 
-  // Trending — auto-loaded on mount, always visible
+  // Trending — general feed on mount, switches to search-specific after a search
+  const [generalTrending, setGeneralTrending] = useState<TrendingKeyword[] | null>(null)
   const [trending, setTrending] = useState<TrendingKeyword[] | null>(null)
   const [trendingError, setTrendingError] = useState(false)
   const [trendingOpen, setTrendingOpen] = useState(true)
+  const [trendingLabel, setTrendingLabel] = useState<string | null>(null)
 
   useEffect(() => {
     fetch('/api/dashboard/opportunities')
       .then(r => { if (!r.ok) throw new Error(); return r.json() })
-      .then(d => setTrending(d.keywords || []))
+      .then(d => {
+        setGeneralTrending(d.keywords || [])
+        setTrending(d.keywords || [])
+      })
       .catch(() => setTrendingError(true))
   }, [])
 
@@ -111,6 +116,12 @@ export default function KeywordsPage() {
           keyword: s.keyword, resultCount: s.resultCount, competitionScore: s.competitionScore, isRocket: s.isRocket,
         })),
       ])
+
+      // Update trending table with search-specific results
+      if (data.trending && data.trending.length > 0) {
+        setTrending(data.trending)
+        setTrendingLabel(query)
+      }
     } catch {
       setError('Failed to fetch keyword data. Please try again.')
     } finally {
@@ -133,7 +144,11 @@ export default function KeywordsPage() {
     })
   }
 
-  const handleFilterClear = () => setFilterSelected({})
+  const handleFilterClear = () => {
+    setFilterSelected({})
+    setTrending(generalTrending)
+    setTrendingLabel(null)
+  }
 
   const handleAutoSearch = (query: string) => {
     setSearchInput(query)
@@ -173,7 +188,9 @@ export default function KeywordsPage() {
             <TrendingUp size={20} className="text-white" />
             <div className="flex-1 text-left">
               <p className="text-white font-black text-base tracking-tight">TpT Trending Keywords</p>
-              <p className="text-green-100 text-xs font-medium mt-0.5">Live from TpT! The keywords that are trending right now</p>
+              <p className="text-green-100 text-xs font-medium mt-0.5">
+                {trendingLabel ? `Trending on TpT for "${trendingLabel}"` : 'Live from TpT! The keywords that are trending right now'}
+              </p>
             </div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
