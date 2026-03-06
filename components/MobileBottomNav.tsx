@@ -2,14 +2,14 @@
 
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { Search, TrendingUp, Telescope, Wand2, FileText } from 'lucide-react'
+import { Search, Telescope, Wand2, FileText, Bookmark } from 'lucide-react'
 
 const NAV_ITEMS = [
   { href: '/keywords',              label: 'Keywords',    Icon: Search },
-  { href: '/trending',              label: 'Trending',    Icon: TrendingUp },
   { href: '/niche-finder',          label: 'Niche',       Icon: Telescope },
   { href: '/title-generator',       label: 'Titles',      Icon: Wand2 },
   { href: '/description-generator', label: 'Description', Icon: FileText },
+  { href: '/saved-keywords',        label: 'Saved',       Icon: Bookmark },
 ]
 
 export function MobileBottomNav() {

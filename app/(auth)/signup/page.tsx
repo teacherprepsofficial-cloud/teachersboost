@@ -126,7 +126,8 @@ export default function SignupPage() {
               onChange={handleChange}
               required
               className="w-full border border-gray-300 rounded-[5px] px-4 py-2 focus:outline-none focus:ring-2 focus:ring-rose-500"
-              placeholder="Minimum 6 characters"
+              minLength={8}
+              placeholder="Minimum 8 characters"
             />
           </div>
 

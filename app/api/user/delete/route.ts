@@ -3,21 +3,18 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { connectDB } from '@/lib/db'
 import { User } from '@/models/User'
-import { SavedKeyword } from '@/models/SavedKeyword'
-import { Testimonial } from '@/models/Testimonial'
-import { Feedback } from '@/models/Feedback'
 
 export async function DELETE() {
   const session = await getServerSession(authOptions)
-  if (!session?.user?.id) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  if (!session?.user?.id) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+  }
 
   await connectDB()
-
-  const userId = session.user.id
-  const user = await User.findById(userId)
+  const user = await User.findById(session.user.id)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  // Cancel Stripe subscription immediately so they are NOT charged again
+  // Cancel Stripe subscription immediately if active
   if (user.stripeSubscriptionId && process.env.STRIPE_SECRET_KEY) {
     try {
       const Stripe = (await import('stripe')).default
@@ -25,17 +22,11 @@ export async function DELETE() {
       await stripe.subscriptions.cancel(user.stripeSubscriptionId)
     } catch (err) {
       console.error('[delete-account] Stripe cancel error:', err)
-      // Continue with deletion even if Stripe fails — user still gets deleted
+      // Continue with deletion even if Stripe fails
     }
   }
 
-  // Delete all user data
-  await Promise.all([
-    User.findByIdAndDelete(userId),
-    SavedKeyword.deleteMany({ userId }),
-    Testimonial.deleteMany({ userId }),
-    Feedback.deleteMany({ userId }),
-  ])
+  await User.findByIdAndDelete(session.user.id)
 
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ ok: true })
 }

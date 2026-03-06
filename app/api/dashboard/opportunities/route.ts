@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
+import { scrapeKeywordSuggestions, scrapeKeywordResults } from '@/lib/scraper'
 
 export async function GET() {
   try {
@@ -33,16 +34,31 @@ export async function GET() {
     }
 
     const data = await res.json()
-    const keywords: string[] = []
+    const rawKeywords: string[] = []
     for (const result of data?.results || []) {
       for (const hit of result?.hits || []) {
-        if (hit.query && !keywords.includes(hit.query)) {
-          keywords.push(hit.query as string)
+        if (hit.query && !rawKeywords.includes(hit.query)) {
+          rawKeywords.push(hit.query as string)
         }
       }
     }
 
-    return NextResponse.json({ keywords: keywords.slice(0, 5) })
+    const keywords = rawKeywords.slice(0, 5)
+
+    // Fetch competition scores for each keyword in parallel
+    const keywordsWithScores = await Promise.all(
+      keywords.map(async (kw) => {
+        const r = await scrapeKeywordResults(kw)
+        return {
+          keyword: kw,
+          resultCount: r.resultCount,
+          competitionScore: r.competitionScore,
+          isRocket: r.isRocket,
+        }
+      })
+    )
+
+    return NextResponse.json({ keywords: keywordsWithScores })
   } catch (err) {
     console.error('[opportunities]', err)
     return NextResponse.json({ error: 'Failed' }, { status: 500 })

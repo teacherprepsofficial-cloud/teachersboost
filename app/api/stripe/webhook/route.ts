@@ -56,6 +56,7 @@ export async function POST(req: Request) {
           plan,
           stripeSubscriptionId: subscription.id,
           subscriptionRenewalDate: renewalDate,
+          cancelAtPeriodEnd: subscription.cancel_at_period_end ?? false,
         })
       }
       break
@@ -71,6 +72,7 @@ export async function POST(req: Request) {
         stripeSubscriptionId: null,
         subscriptionRenewalDate: null,
         cancelledAt: new Date(),
+        cancelAtPeriodEnd: false,
       })
       break
     }

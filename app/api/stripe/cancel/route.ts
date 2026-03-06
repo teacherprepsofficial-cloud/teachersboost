@@ -14,23 +14,20 @@ export async function POST() {
   const user = await User.findById(session.user.id)
   if (!user) return NextResponse.json({ error: 'User not found' }, { status: 404 })
 
-  // If Stripe is integrated and user has a subscription, cancel it
   if (user.stripeSubscriptionId && process.env.STRIPE_SECRET_KEY) {
     try {
       const Stripe = (await import('stripe')).default
       const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
-      await stripe.subscriptions.cancel(user.stripeSubscriptionId)
+      await stripe.subscriptions.update(user.stripeSubscriptionId, {
+        cancel_at_period_end: true,
+      })
     } catch (err) {
       console.error('[cancel] Stripe error:', err)
-      // Continue to downgrade locally even if Stripe fails
+      return NextResponse.json({ error: 'Failed to cancel subscription.' }, { status: 500 })
     }
   }
 
-  // Downgrade to free
-  user.plan = 'free'
-  user.stripeSubscriptionId = undefined
-  user.subscriptionRenewalDate = undefined
-  user.cancelledAt = new Date()
+  user.cancelAtPeriodEnd = true
   await user.save()
 
   return NextResponse.json({ ok: true })

@@ -35,6 +35,9 @@ export async function GET() {
 
   return NextResponse.json({
     plan,
+    cancelAtPeriodEnd: user.cancelAtPeriodEnd ?? false,
+    subscriptionRenewalDate: user.subscriptionRenewalDate ?? null,
+    hasPassword: !!user.password,
     keywordSearches: {
       used: weeklySearchesUsed,
       limit: LIMITS.keywordSearches[plan],

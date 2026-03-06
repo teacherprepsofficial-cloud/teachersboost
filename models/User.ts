@@ -29,6 +29,7 @@ interface IUser extends mongoose.Document {
   // Subscription
   subscriptionRenewalDate?: Date
   cancelledAt?: Date
+  cancelAtPeriodEnd?: boolean
   lastSeen?: Date
   createdAt: Date
   updatedAt: Date
@@ -60,6 +61,7 @@ const UserSchema = new mongoose.Schema<IUser>(
     aiUsageMonth: { type: String, default: '' },
     subscriptionRenewalDate: Date,
     cancelledAt: Date,
+    cancelAtPeriodEnd: { type: Boolean, default: false },
     lastSeen: { type: Date, default: Date.now },
   },
   { timestamps: true }

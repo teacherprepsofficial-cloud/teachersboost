@@ -4,8 +4,8 @@ import { useSession, signOut } from 'next-auth/react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Search, LogOut, TrendingUp, Bookmark, ShieldCheck, Wand2, FileText,
-  Telescope, Star, Shield, ScrollText, HelpCircle, DollarSign, Phone, Info, User
+  Search, LogOut, Bookmark, ShieldCheck, Wand2, FileText,
+  Telescope, Star, Shield, ScrollText, HelpCircle, DollarSign, Phone, Info, User, MessageCircle
 } from 'lucide-react'
 import { useState, useEffect } from 'react'
 import { FeedbackWidget } from './FeedbackWidget'
@@ -26,12 +26,12 @@ function LiveDate() {
 
 const menuItems = [
   { href: '/keywords',              label: 'Keyword Explorer',  icon: Search },
-  { href: '/trending',              label: 'Trending Keywords',  icon: TrendingUp },
   { href: '/niche-finder',          label: 'Niche Finder',       icon: Telescope },
   { href: '/title-generator',       label: 'Title Generator',    icon: Wand2 },
   { href: '/description-generator', label: 'Description Writer', icon: FileText },
   { href: '/saved-keywords',        label: 'Keyword Notebook',   icon: Bookmark },
   { href: '/testimonials',          label: 'Testimonials',       icon: Star },
+  { href: '/feedback',              label: 'Send Feedback',      icon: MessageCircle, mobileOnly: true },
 ]
 
 const footerLinks = [
@@ -78,6 +78,7 @@ function SidebarContent({ onNavigate, isMobile = false }: { onNavigate?: () => v
         {menuItems.map((item) => {
           const Icon = item.icon
           const isActive = pathname === item.href || (item.href !== '/trending' && item.href !== '/keywords' && pathname.startsWith(item.href))
+          if (item.mobileOnly && !isMobile) return null
           return (
             <Link
               key={item.href}

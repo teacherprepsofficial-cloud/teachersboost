@@ -68,6 +68,7 @@ export const authOptions: NextAuthOptions = {
         if (session.sellerType !== undefined) token.sellerType = session.sellerType
         if (session.name) token.name = session.name
         if (session.onboardingCompleted !== undefined) token.onboardingCompleted = session.onboardingCompleted
+        if (session.plan) token.plan = session.plan
       }
       return token
     },
