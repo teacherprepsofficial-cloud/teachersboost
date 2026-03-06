@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { connectDB } from '@/lib/db'
 import { User } from '@/models/User'
-import { sendVerificationEmail } from '@/lib/email'
+import { sendVerificationEmail, sendWelcomeEmail } from '@/lib/email'
 import crypto from 'crypto'
 
 export async function POST(req: NextRequest) {
@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
     await user.save()
 
     await sendVerificationEmail(email.toLowerCase(), name, verificationToken)
+    await sendWelcomeEmail(email.toLowerCase(), name)
 
     return NextResponse.json({ success: true })
   } catch (error) {

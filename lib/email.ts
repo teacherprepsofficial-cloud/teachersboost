@@ -35,6 +35,78 @@ export async function sendPasswordResetEmail(email: string, name: string, token:
   })
 }
 
+export async function sendWelcomeEmail(email: string, name: string) {
+  const siteUrl = process.env.NEXTAUTH_URL || 'https://teachersboost.vercel.app'
+
+  await resend.emails.send({
+    from: 'TeachersBoost <noreply@teachersboost.com>',
+    to: email,
+    subject: `Welcome to TeachersBoost, ${name}! 🚀`,
+    html: `
+      <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; max-width: 520px; margin: 0 auto; padding: 40px 20px; background: #ffffff;">
+
+        <!-- Header -->
+        <div style="margin-bottom: 32px;">
+          <span style="font-size: 22px; font-weight: 900; color: #111827; letter-spacing: -0.5px;">Teachers<span style="color: #E11D48;">Boost</span></span>
+        </div>
+
+        <h1 style="font-size: 26px; font-weight: 800; color: #111827; margin: 0 0 12px 0; line-height: 1.2;">
+          Welcome aboard, ${name}! 🎉
+        </h1>
+
+        <p style="color: #475569; font-size: 16px; line-height: 1.6; margin: 0 0 24px 0;">
+          You've just joined the smartest TpT sellers who use data — not guesswork — to grow their stores. Here's what you can do right now:
+        </p>
+
+        <!-- Feature list -->
+        <div style="background: #F8FAFC; border-radius: 8px; padding: 24px; margin-bottom: 32px;">
+          <div style="display: flex; align-items: flex-start; margin-bottom: 16px;">
+            <span style="font-size: 20px; margin-right: 12px;">🔍</span>
+            <div>
+              <p style="margin: 0 0 2px 0; font-weight: 700; color: #111827; font-size: 15px;">Keyword Explorer</p>
+              <p style="margin: 0; color: #64748B; font-size: 14px;">Find low-competition keywords with real TpT competition scores.</p>
+            </div>
+          </div>
+          <div style="display: flex; align-items: flex-start; margin-bottom: 16px;">
+            <span style="font-size: 20px; margin-right: 12px;">🎯</span>
+            <div>
+              <p style="margin: 0 0 2px 0; font-weight: 700; color: #111827; font-size: 15px;">Niche Finder</p>
+              <p style="margin: 0; color: #64748B; font-size: 14px;">Discover untapped product niches before the competition does.</p>
+            </div>
+          </div>
+          <div style="display: flex; align-items: flex-start;">
+            <span style="font-size: 20px; margin-right: 12px;">📈</span>
+            <div>
+              <p style="margin: 0 0 2px 0; font-weight: 700; color: #111827; font-size: 15px;">TpT Trending Keywords</p>
+              <p style="margin: 0; color: #64748B; font-size: 14px;">See what buyers are searching for on TpT right now — live.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CTA Button -->
+        <div style="text-align: center; margin-bottom: 32px;">
+          <a href="${siteUrl}/keywords"
+            style="display: inline-block; background: #E11D48; color: #ffffff; padding: 16px 40px;
+                   border-radius: 5px; font-weight: 800; font-size: 17px; text-decoration: none; letter-spacing: -0.2px;">
+            Get Started Now →
+          </a>
+        </div>
+
+        <p style="color: #94A3B8; font-size: 13px; line-height: 1.6; margin: 0 0 24px 0; text-align: center;">
+          You're on the <strong>Free plan</strong> — 3 keyword searches/week &amp; 3 niche searches/month.<br/>
+          <a href="${siteUrl}/pricing" style="color: #E11D48; text-decoration: none; font-weight: 600;">Upgrade anytime</a> to unlock unlimited searches.
+        </p>
+
+        <hr style="border: none; border-top: 1px solid #E2E8F0; margin: 24px 0;" />
+        <p style="color: #CBD5E1; font-size: 12px; text-align: center; margin: 0;">
+          TeachersBoost — TpT Seller Tools &nbsp;·&nbsp;
+          <a href="${siteUrl}" style="color: #CBD5E1;">teachersboost.vercel.app</a>
+        </p>
+      </div>
+    `,
+  })
+}
+
 export async function sendVerificationEmail(email: string, name: string, token: string) {
   const verifyUrl = `${process.env.NEXTAUTH_URL}/verify-email?token=${token}`
 
