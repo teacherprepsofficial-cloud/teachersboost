@@ -382,7 +382,7 @@ export default function KeywordBreakdownPage() {
             <div className="mt-5">
               <h2 className="text-xl font-black text-slate-900 mb-3 flex items-center">
                 Matching Keywords
-                <InfoTooltip text="Related keyword variations of your search — each one is a potential product idea you could create and sell on TpT." align="right" />
+                <InfoTooltip text="Related keyword variations of your search — each one is a potential product idea you could create and sell on TpT." align="center" />
               </h2>
               <div className="overflow-x-auto rounded-[5px] border border-gray-200">
                 <table className="w-full">
