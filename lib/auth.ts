@@ -1,6 +1,5 @@
 import { NextAuthOptions } from 'next-auth'
 import CredentialsProvider from 'next-auth/providers/credentials'
-import GoogleProvider from 'next-auth/providers/google'
 import { connectDB } from './db'
 import { User } from '@/models/User'
 
@@ -39,11 +38,6 @@ export const authOptions: NextAuthOptions = {
           sellerType: user.sellerType || null,
         }
       },
-    }),
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID || '',
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
-      allowDangerousEmailAccountLinking: true,
     }),
   ],
   pages: {
