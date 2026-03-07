@@ -109,7 +109,7 @@ function KDMeter({ score }: { score: number }) {
     <div className="flex flex-col items-center w-full">
       <p className="text-2xl font-black text-slate-900 tracking-tight mb-3 text-center w-full flex items-center justify-center">
         Keyword Difficulty
-        <InfoTooltip text="A 0–100 score showing how hard it would be to rank for this keyword on TpT — the lower the score, the easier it is to get your product seen." />
+        <InfoTooltip text="A 0–100 score showing how hard it would be to rank for this keyword on TpT — the lower the score, the easier it is to get your product seen." align="right" />
       </p>
       <div className="relative w-full flex flex-col items-center">
         <svg width="300" height="158" viewBox="0 0 300 158">
