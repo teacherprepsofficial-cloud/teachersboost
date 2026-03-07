@@ -37,6 +37,7 @@ export default function KeywordsPage() {
   const [typedKeyword, setTypedKeyword] = useState('')
   const [results, setResults] = useState<KeywordResult[]>([])
   const [isLoading, setIsLoading] = useState(false)
+  const [searchingFor, setSearchingFor] = useState('')
   const [error, setError] = useState('')
   const [showUpgradeModal, setShowUpgradeModal] = useState(false)
   const [upgradeInfo, setUpgradeInfo] = useState({ remaining: 0, limit: 0 })
@@ -124,6 +125,7 @@ export default function KeywordsPage() {
     }
 
     if (kw) setSearchInput(kw)
+    setSearchingFor(kw || searchInput)
     setIsLoading(true)
     setError('')
     setResults([])
@@ -375,7 +377,7 @@ export default function KeywordsPage() {
           <div className="text-center py-12 text-slate-400">
             <Loader className="animate-spin mx-auto mb-3 text-rose-500" size={32} />
             <p className="text-sm font-medium">Analyzing</p>
-            <p className="text-rose-500 font-bold mt-1">"{searchInput}"</p>
+            <p className="text-rose-500 font-bold mt-1">"{searchingFor}"</p>
             <p className="text-xs text-slate-400 mt-1">Pulling live data from TpT — takes 10–20 seconds</p>
           </div>
         )}
