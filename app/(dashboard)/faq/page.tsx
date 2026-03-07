@@ -60,7 +60,7 @@ const FAQ_SECTIONS = [
       },
       {
         q: 'What is the Niche Finder and how does it work?',
-        a: 'Tell it what you teach ("3rd grade math teacher," "high school special education") and it returns a ranked list of low-competition keyword opportunities tailored to your role. Free users see the top 5 results; paid users see the full 25.',
+        a: 'Tell it what you teach ("3rd grade math teacher," "high school special education") and it returns a ranked list of low-competition keyword opportunities tailored to your role. Free users see the top 5 results; Boost plan users see the full 25.',
       },
       {
         q: 'What does the Title Generator do?',
