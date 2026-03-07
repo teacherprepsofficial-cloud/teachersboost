@@ -80,6 +80,21 @@ export default function TestimonialsPage() {
     setSubmitting(false)
   }
 
+  if (!session) {
+    return (
+      <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center px-8">
+        <div className="bg-white rounded-[5px] shadow-sm p-8 max-w-sm w-full text-center">
+          <p className="text-3xl mb-3">🔒</p>
+          <h2 className="text-lg font-black text-gray-900 mb-2">Sign in to leave a review</h2>
+          <p className="text-sm text-slate-500 mb-5">You must be logged in to submit a testimonial.</p>
+          <a href="/login" className="block w-full bg-rose-600 hover:bg-rose-700 text-white font-bold py-3 rounded-[5px] transition text-sm">
+            Sign In
+          </a>
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="min-h-screen bg-[#F1F5F9]">
 
