@@ -8,6 +8,7 @@ import { KeywordTable } from '@/components/KeywordTable'
 import { UpgradeModal } from '@/components/UpgradeModal'
 import { FilterPanel } from '@/components/FilterPanel'
 import { SignupPromptModal } from '@/components/SignupPromptModal'
+import { containsProfanity, PROFANITY_ERROR } from '@/lib/profanity'
 
 interface KeywordResult {
   keyword: string
@@ -69,40 +70,11 @@ export default function KeywordsPage() {
       .catch(() => setTrendingError(true))
   }, [])
 
-  const BANNED_WORDS = [
-    'fuck','fucker','fucking','fucked','fück',
-    'shit','shitting','shitter','bullshit',
-    'bitch','bitches','bitching',
-    'ass','asshole','asses',
-    'dick','dicks','dickhead',
-    'cock','cocks','cocksucker',
-    'pussy','pussies',
-    'cunt','cunts',
-    'bastard','bastards',
-    'damn','damnit',
-    'hell',
-    'nigger','nigga','niggas',
-    'faggot','fag','fags',
-    'whore','whores',
-    'slut','sluts',
-    'piss','pissed',
-    'porn','porno',
-    'sex','sexy','sexting',
-    'rape','rapist',
-    'motherfucker','motherfucking',
-    'jackass','dumbass','smartass',
-  ]
-
-  function containsProfanity(text: string): boolean {
-    const words = text.toLowerCase().replace(/[^a-z0-9 ]/g, ' ').split(/\s+/)
-    return words.some(w => BANNED_WORDS.includes(w))
-  }
-
   const handleSearch = async (kw?: string) => {
     const query = kw || searchInput
     if (!query.trim()) return
     if (containsProfanity(query)) {
-      setError('Please keep searches school-appropriate. TeachersBoost is a tool for educators.')
+      setError(PROFANITY_ERROR)
       return
     }
     if (!session?.user?.email) {
@@ -112,15 +84,8 @@ export default function KeywordsPage() {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     const urlRegex = /^https?:\/\//i
-    const profanityList = ['fuck', 'shit', 'ass', 'bitch', 'cunt', 'dick', 'pussy', 'cock', 'bastard', 'damn', 'crap', 'piss', 'whore', 'slut', 'nigger', 'nigga', 'faggot', 'fag', 'retard']
-    const lowerQuery = query.trim().toLowerCase()
-    const hasProfanity = profanityList.some(w => lowerQuery.split(/\s+/).includes(w) || lowerQuery === w)
     if (emailRegex.test(query.trim()) || urlRegex.test(query.trim())) {
       setError('Please enter a keyword or topic — not an email address or URL.')
-      return
-    }
-    if (hasProfanity) {
-      setError('Please enter an appropriate keyword related to TpT products.')
       return
     }
 

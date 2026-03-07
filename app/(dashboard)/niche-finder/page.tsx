@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Telescope, ArrowRight } from 'lucide-react'
+import { containsProfanity, PROFANITY_ERROR } from '@/lib/profanity'
 import Link from 'next/link'
 import { SignupPromptModal } from '@/components/SignupPromptModal'
 
@@ -55,6 +56,7 @@ export default function NicheFinderPage() {
 
   const find = async () => {
     if (!role.trim()) return
+    if (containsProfanity(role)) { setError(PROFANITY_ERROR); return }
     if (!session) { setShowSignupModal(true); return }
     setLoading(true)
     setError('')

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { BookOpen, Copy, Check } from 'lucide-react'
+import { containsProfanity, PROFANITY_ERROR } from '@/lib/profanity'
 
 const GRADE_LEVELS = ['Pre-K', 'Kindergarten', '1st Grade', '2nd Grade', '3rd Grade', '4th Grade', '5th Grade', '6th Grade', '7th Grade', '8th Grade', '9th Grade', '10th Grade', '11th Grade', '12th Grade']
 const STANDARDS_SETS = [
@@ -27,6 +28,7 @@ export default function StandardsTaggerPage() {
 
   const find = async () => {
     if (!topic.trim()) return
+    if (containsProfanity(topic)) { setError(PROFANITY_ERROR); return }
     setLoading(true)
     setError('')
     setStandards([])

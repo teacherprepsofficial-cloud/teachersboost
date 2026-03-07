@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Wand2, Copy, Check } from 'lucide-react'
+import { containsProfanity, PROFANITY_ERROR } from '@/lib/profanity'
 import { SignupPromptModal } from '@/components/SignupPromptModal'
 
 const GRADE_LEVELS = ['PreK','Kindergarten','1st','2nd','3rd','4th','5th','6th','7th','8th','9th','10th','11th','12th','Higher Education','Adult Education','Homeschool','Staff','Not Grade Specific']
@@ -32,6 +33,7 @@ export default function TitleGeneratorPage() {
 
   const generate = async () => {
     if (!keyword.trim()) return
+    if (containsProfanity(keyword)) { setError(PROFANITY_ERROR); return }
     if (!session) { setShowSignupModal(true); return }
     setLoading(true)
     setError('')
