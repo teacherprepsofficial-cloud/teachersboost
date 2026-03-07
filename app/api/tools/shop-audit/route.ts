@@ -114,7 +114,7 @@ export async function POST(req: NextRequest) {
 
   const plan = user.plan || 'free'
   if (plan === 'free') {
-    return NextResponse.json({ error: 'Shop Audit is available on Starter and Pro plans. Upgrade to access.' }, { status: 403 })
+    return NextResponse.json({ error: 'Shop Audit is available on Boost and Pro plans. Upgrade to access.' }, { status: 403 })
   }
 
   const { storeUrl: rawUrl } = await req.json()

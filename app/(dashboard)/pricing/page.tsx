@@ -219,7 +219,7 @@ export default function PricingPage() {
           {[
             { q: 'Can I cancel anytime?', a: 'Yes. No contracts, no commitments. Cancel from your Settings page at any time. You keep paid access through the end of your billing period, then your account returns to the free plan.' },
             { q: 'Do you offer refunds?', a: 'We do not offer refunds. When you subscribe you get immediate access to all tools, so we cannot refund charges once a billing cycle begins.' },
-            { q: "What's the difference between Starter and Pro?", a: 'Both give unlimited keyword research and niche finding. The difference is AI volume: Starter includes 20 Title Generator and 20 Description Writer uses per month. Pro raises both limits to 75/month.' },
+            { q: "What's the difference between Boost and Pro?", a: 'Both give unlimited keyword research and niche finding. The difference is AI volume: Boost includes 20 Title Generator and 20 Description Writer uses per month. Pro raises both limits to 75/month.' },
             { q: 'Is my payment secure?', a: 'Yes. Payments are processed by Stripe. We never store your card details.' },
           ].map((item) => (
             <div key={item.q} className="px-6 py-4">

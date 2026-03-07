@@ -10,7 +10,7 @@ function planLabel(plan: string) {
   if (plan === 'admin') return 'Admin'
   if (plan === 'pro') return 'Pro'
   if (plan === 'starter') return 'Boost'
-  return 'Starter'
+  return 'Free'
 }
 
 function planBadge(plan: string) {

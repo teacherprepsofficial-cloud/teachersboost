@@ -92,7 +92,7 @@ export default function ShopAuditPage() {
 
         {!isPaid && (
           <div className="bg-amber-50 border border-amber-200 rounded-[5px] px-5 py-4 text-sm text-amber-800 font-medium">
-            Shop Audit is available on Starter and Pro plans. <a href="/settings" className="underline font-bold">Upgrade your plan →</a>
+            Shop Audit is available on Boost and Pro plans. <a href="/settings" className="underline font-bold">Upgrade your plan →</a>
           </div>
         )}
 

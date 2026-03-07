@@ -34,12 +34,14 @@ TeachersBoost is a TpT (Teachers Pay Teachers) seller SaaS tool. It helps TpT se
 
 ## Plan Tiers & Limits
 
-| Plan    | Keyword Searches/week | AI Title/Desc per month | Save Keywords |
-|---------|----------------------|------------------------|---------------|
-| free    | 3/week               | 0                      | 0             |
-| starter (Boost) | unlimited  | 20 each                | 50            |
-| pro     | unlimited            | 75 each                | 100           |
-| admin   | unlimited            | unlimited              | unlimited     |
+| Plan    | Display Name | Keyword Searches/week | AI Title/Desc per month | Save Keywords |
+|---------|-------------|----------------------|------------------------|---------------|
+| free    | Free        | 3/week               | 0                      | 0             |
+| starter | Boost       | unlimited            | 20 each                | 50            |
+| pro     | Pro         | unlimited            | 75 each                | 100           |
+| admin   | Admin       | unlimited            | unlimited              | unlimited     |
+
+**IMPORTANT**: Internal DB/Stripe value is `starter` but display name shown to users is **Boost** ($9.99/mo). Never show "Starter" to users anywhere in the UI.
 
 Admin accounts: `teachersboost@gmail.com`, `elliottzelinskas@gmail.com`
 → Set via `scripts/seed-admin.ts`
