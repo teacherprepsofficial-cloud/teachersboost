@@ -21,8 +21,8 @@ export async function POST(req: NextRequest) {
       : [...algoliaKeywords, ...(await scrapeKeywordLongTail(keyword))]
 
     const SORT_ORDERS = [
-      { key: 'topRanking',  order: 'Relevance',   label: '#1 Top Ranking Product',  icon: '🏆' },
-      { key: 'topRated',    order: 'Rating',       label: '#1 Top Rated Product',    icon: '⭐' },
+      { key: 'topRanking',  order: 'Relevance',   label: 'Top Ranking Product',  icon: '🏆' },
+      { key: 'topRated',    order: 'Rating',       label: 'Top Rated Product',    icon: '⭐' },
       { key: 'lowestPrice', order: 'Price-Asc',    label: 'Lowest Priced Product',   icon: '🏷️' },
       { key: 'mostRecent',  order: 'Most-Recent',  label: 'Most Recently Uploaded',  icon: '🆕' },
     ]
