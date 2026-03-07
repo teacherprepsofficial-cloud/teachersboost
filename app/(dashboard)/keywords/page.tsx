@@ -42,6 +42,7 @@ export default function KeywordsPage() {
   const [upgradeInfo, setUpgradeInfo] = useState({ remaining: 0, limit: 0 })
   const [showSignupModal, setShowSignupModal] = useState(false)
   const [filterSelected, setFilterSelected] = useState<Record<string, string[]>>({})
+  const [siteStats, setSiteStats] = useState<{ members: number; online: number } | null>(null)
 
   // Trending — general feed on mount, switches to search-specific after a search
   const [generalTrending, setGeneralTrending] = useState<TrendingKeyword[] | null>(null)
@@ -49,6 +50,13 @@ export default function KeywordsPage() {
   const [trendingError, setTrendingError] = useState(false)
   const [trendingOpen, setTrendingOpen] = useState(true)
   const [trendingLabel, setTrendingLabel] = useState<string | null>(null)
+
+  useEffect(() => {
+    fetch('/api/public/stats')
+      .then(r => r.json())
+      .then(d => setSiteStats(d))
+      .catch(() => {})
+  }, [])
 
   useEffect(() => {
     fetch('/api/dashboard/opportunities')
@@ -191,6 +199,15 @@ export default function KeywordsPage() {
   return (
     <div className="min-h-screen bg-[#F1F5F9] p-8 pb-40">
       <div className="max-w-5xl mx-auto">
+
+        {/* Mobile stats — above title */}
+        {siteStats && (
+          <div className="md:hidden flex items-center justify-center gap-2 mb-3 text-sm font-semibold text-slate-500">
+            <span>👥 {siteStats.members.toLocaleString()} members</span>
+            <span className="text-slate-300">·</span>
+            <span className="text-green-600">{siteStats.online} online now</span>
+          </div>
+        )}
 
         <h1 className="text-5xl font-black text-gray-900 mb-2 tracking-tight text-center">Teachers Pay Teachers Seller Tool</h1>
 
@@ -357,7 +374,9 @@ export default function KeywordsPage() {
         {isLoading && (
           <div className="text-center py-12 text-slate-400">
             <Loader className="animate-spin mx-auto mb-3 text-rose-500" size={32} />
-            <p className="text-sm font-medium">Analyzing keywords...</p>
+            <p className="text-sm font-medium">Analyzing</p>
+            <p className="text-rose-500 font-bold mt-1">"{searchInput}"</p>
+            <p className="text-xs text-slate-400 mt-1">Pulling live data from TpT — takes 10–20 seconds</p>
           </div>
         )}
 
