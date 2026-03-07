@@ -374,11 +374,11 @@ export default function KeywordsPage() {
         )}
 
         {isLoading && (
-          <div className="text-center py-12 text-slate-400">
-            <Loader className="animate-spin mx-auto mb-3 text-rose-500" size={32} />
-            <p className="text-sm font-medium">Analyzing</p>
-            <p className="text-rose-500 font-bold mt-1">"{searchingFor}"</p>
-            <p className="text-xs text-slate-400 mt-1">Pulling live data from TpT — takes 10–20 seconds</p>
+          <div className="text-center py-12">
+            <Loader className="animate-spin mx-auto mb-4 text-rose-500" size={32} />
+            <p className="text-xl font-black text-gray-900 block">Analyzing</p>
+            <p className="text-xl font-black text-rose-500 block mt-1">"{searchingFor}"</p>
+            <p className="text-xs text-slate-400 mt-2">Pulling live data from TpT — takes 5–10 seconds</p>
           </div>
         )}
 
