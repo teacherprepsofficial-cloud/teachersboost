@@ -88,8 +88,8 @@ const FAQ_SECTIONS = [
         a: 'Yes. The free plan includes access to Keyword Research (3 searches per week) and Niche Finder (5 searches per month). No credit card required.',
       },
       {
-        q: "What's the difference between the Free, Starter, and Pro plans?",
-        a: 'Free gives you limited keyword and niche research. Starter ($9.99/month) unlocks unlimited keyword searches, unlimited niche finding, and access to the Title Generator and Description Writer (20 generations each per month). Pro ($14.99/month) includes everything in Starter with higher AI limits: 75 title and 75 description generations per month.',
+        q: "What's the difference between the Free, Boost, and Pro plans?",
+        a: 'Free gives you limited keyword and niche research. Boost ($9.99/month) unlocks unlimited keyword searches, unlimited niche finding, and access to the Title Generator and Description Writer (20 generations each per month). Pro ($14.99/month) includes everything in Boost with higher AI limits: 75 title and 75 description generations per month.',
       },
       {
         q: 'How do I upgrade my plan?',
