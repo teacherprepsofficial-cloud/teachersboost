@@ -22,6 +22,9 @@ const nunito = Nunito({
 export const metadata: Metadata = {
   title: "TeachersBoost - TpT Seller Tools",
   description: "Grow your Teachers Pay Teachers business with keyword research, AI generators, and shop optimization",
+  icons: {
+    icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>",
+  },
 };
 
 export default function RootLayout({

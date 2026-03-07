@@ -9,7 +9,6 @@
  */
 
 import Stripe from 'stripe'
-import * as fs from 'fs'
 
 const STRIPE_KEY = process.env.STRIPE_SECRET_KEY
 if (!STRIPE_KEY) {
@@ -20,7 +19,6 @@ if (!STRIPE_KEY) {
 const stripe = new Stripe(STRIPE_KEY)
 
 const EXPIRY = Math.floor(new Date('2026-04-06T23:59:59Z').getTime() / 1000)
-const COUNT = 50
 
 async function main() {
   console.log('Creating coupon (100% off, one-time use)...')
@@ -28,35 +26,22 @@ async function main() {
   const coupon = await stripe.coupons.create({
     percent_off: 100,
     duration: 'once',
-    name: 'TeachersBoost — Free Month (V1 Migration)',
+    name: 'TB Free First Month',
     redeem_by: EXPIRY,
   })
 
   console.log(`Coupon created: ${coupon.id}`)
-  console.log(`Generating ${COUNT} unique promo codes...`)
 
-  const codes: string[] = []
+  const promo = await stripe.promotionCodes.create({
+    coupon: coupon.id as any,
+    code: 'WELCOME2026',
+    max_redemptions: 61,
+    expires_at: EXPIRY,
+  })
 
-  for (let i = 0; i < COUNT; i++) {
-    const promo = await stripe.promotionCodes.create({
-      coupon: coupon.id,
-      max_redemptions: 1,
-      expires_at: EXPIRY,
-    })
-    codes.push(promo.code)
-    process.stdout.write(`\r${i + 1}/${COUNT}`)
-  }
-
-  console.log('\nDone! Writing promo-codes.csv...')
-
-  const rows = ['Code,Signup URL']
-  for (const code of codes) {
-    rows.push(`${code},https://teachersboost.com/signup?promo=${code}`)
-  }
-
-  fs.writeFileSync('promo-codes.csv', rows.join('\n'))
-  console.log('Saved to promo-codes.csv')
-  console.log(`\nCoupon ID: ${coupon.id} — expires April 6 2026`)
+  console.log(`\nPromo code: ${promo.code}`)
+  console.log(`Max redemptions: ${promo.max_redemptions}`)
+  console.log(`Expires: ${new Date(EXPIRY * 1000).toDateString()}`)
 }
 
 main().catch(err => {
