@@ -218,7 +218,7 @@ export default function PricingPage() {
         <div className="bg-white rounded-[5px] shadow-sm divide-y divide-gray-100">
           {[
             { q: 'Can I cancel anytime?', a: 'Yes. No contracts, no commitments. Cancel from your Settings page at any time. You keep paid access through the end of your billing period, then your account returns to the free plan.' },
-            { q: 'Do you offer refunds?', a: 'We do not offer refunds. When you subscribe you get immediate access to all tools, so we cannot refund charges once a billing cycle begins. This is why we offer a free plan first — try everything before paying.' },
+            { q: 'Do you offer refunds?', a: 'We do not offer refunds. When you subscribe you get immediate access to all tools, so we cannot refund charges once a billing cycle begins.' },
             { q: "What's the difference between Starter and Pro?", a: 'Both give unlimited keyword research and niche finding. The difference is AI volume: Starter includes 20 Title Generator and 20 Description Writer uses per month. Pro raises both limits to 75/month.' },
             { q: 'Is my payment secure?', a: 'Yes. Payments are processed by Stripe. We never store your card details.' },
           ].map((item) => (
