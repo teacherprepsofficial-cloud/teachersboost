@@ -101,7 +101,7 @@ const FAQ_SECTIONS = [
       },
       {
         q: 'Do you offer refunds?',
-        a: 'We do not offer refunds. When you subscribe, you get immediate access to all tools, so we cannot refund charges once a billing cycle begins. This is exactly why we offer a free tier first, so you can try everything before paying. Questions about billing? Email us at teachersboost@gmail.com.',
+        a: 'We do not offer refunds. When you subscribe, you get immediate access to all tools, so we cannot refund charges once a billing cycle begins. Questions about billing? Email us at teachersboost@gmail.com.',
       },
     ],
   },
