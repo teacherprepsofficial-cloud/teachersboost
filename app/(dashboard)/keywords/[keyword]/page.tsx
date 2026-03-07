@@ -216,8 +216,9 @@ export default function KeywordBreakdownPage() {
       <div className="min-h-screen bg-[#F1F5F9] flex items-center justify-center">
         <div className="text-center">
           <Loader className="animate-spin mx-auto mb-5 text-rose-600" size={48} />
-          <p className="text-slate-800 text-2xl font-bold">Analyzing <span className="text-rose-600">"{keyword}"</span></p>
-          <p className="text-slate-400 text-sm mt-2">Pulling live data from TpT — takes 10–20 seconds</p>
+          <p className="text-slate-800 text-2xl font-bold">Analyzing</p>
+          <p className="text-rose-600 text-2xl font-bold mt-1">"{keyword}"</p>
+          <p className="text-slate-400 text-sm mt-2">Pulling live data from TpT — takes 5–10 seconds</p>
         </div>
       </div>
     )
